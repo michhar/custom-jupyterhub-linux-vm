@@ -69,14 +69,42 @@ RUN chmod +x /etc/init.d/jupyterhub
 RUN mkdir -p /etc/jupyterhub
 RUN chmod +x /etc/jupyterhub
 
+# Add a user and add to userlist
+ARG USER_PW
+RUN USER_PW=$USER_PW
+RUN bash -c 'source /cntk/activate-cntk && useradd -g root wonderwoman'
+RUN printf "${USER_PW}\n${USER_PW}" | passwd wonderwoman
+RUN bash -c 'source /cntk/activate-cntk && mkhomedir_helper wonderwoman'
+RUN bash -c 'source /cntk/activate-cntk && mkdir -p /hub/user/wonderwoman/'
+RUN bash -c 'source /cntk/activate-cntk && sudo chown wonderwoman /hub/user/wonderwoman/'
+RUN bash -c 'source /cntk/activate-cntk && mkdir -p /user/wonderwoman/'
+RUN bash -c 'source /cntk/activate-cntk && sudo chown wonderwoman /user/wonderwoman/'
+RUN bash -c 'source /cntk/activate-cntk && echo "wonderwoman admin" >> /etc/jupyterhub/userlist' # this was for docker-compose
+RUN bash -c 'source /cntk/activate-cntk && sudo chown wonderwoman /etc/jupyterhub'
+RUN bash -c 'source /cntk/activate-cntk && sudo chown wonderwoman /etc/jupyterhub'
+
+
+# An attempt to fix the permission error for jupyterhub-singleuser
+RUN bash -c 'source /cntk/activate-cntk && sudo chmod ugo+rx /root/anaconda3/envs/cntk-py35/bin/jupyterhub-singleuser'
+# RUN bash -c 'source /cntk/activate-cntk && sudo chgrp shadow /etc/shadow'
+# RUN bash -c 'source /cntk/activate-cntk && sudo chmod g+r /etc/shadow'
+# RUN bash -c 'source /cntk/activate-cntk && sudo usermod -a -G shadow wonderwoman'
+
+# To fix jupyter user in jupyter.sqlist issues:
+RUN rm jupyterhub.sqlite
+RUN rm jupyterhub_cookie_secret
+
 # Create a default config to /etc/jupyterhub/jupyterhub_config.py
 RUN bash -c 'source /cntk/activate-cntk && jupyterhub --generate-config -f /etc/jupyterhub/jupyterhub_config.py'
-# RUN bash -c 'source /cntk/activate-cntk && echo c.PAMAuthenticator.open_sessions=False >> /etc/jupyterhub/jupyterhub_config.py'
-# RUN bash -c "source /cntk/activate-cntk && echo c.Authenticator.whitelist={\'wonderwoman\'} >> /etc/jupyterhub/jupyterhub_config.py"
+
+RUN bash -c 'source /cntk/activate-cntk && echo c.PAMAuthenticator.open_sessions=False >> /etc/jupyterhub/jupyterhub_config.py'
+
+RUN bash -c "source /cntk/activate-cntk && echo c.Authenticator.whitelist={\'wonderwoman\'} >> /etc/jupyterhub/jupyterhub_config.py"
 RUN bash -c "source /cntk/activate-cntk && echo c.LocalAuthenticator.create_system_users=True >> /etc/jupyterhub/jupyterhub_config.py"
 
 RUN bash -c "source /cntk/activate-cntk && echo c.Authenticator.admin_users={\'wonderwoman\'} >> /etc/jupyterhub/jupyterhub_config.py"
-
+# RUN bash -c 'source /cntk/activate-cntk && jupyterhub upgrade-db'
+RUN bash -c 'source /cntk/activate-cntk && sudo chmod ugo+rx /root/anaconda3/envs/cntk-py35/bin/jupyterhub-singleuser'
 
 # RUN bash -c 'source /cntk/activate-cntk && openssl req -new -newkey rsa:4096 -days 365 -nodes -x509 \
 #     -subj "/C=US/ST=Denial/L=Springfield/O=Dis/CN=www.example.com" \
@@ -112,26 +140,7 @@ RUN chmod 700 /etc/jupyterhub/secrets && \
 # User list
 RUN bash -c 'source /cntk/activate-cntk && cp ./userlist /etc/jupyterhub/userlist'
 
+CMD bash -c "source /cntk/activate-cntk && jupyterhub -f /etc/jupyterhub/jupyterhub_config.py --JupyterHub.hub_ip=0.0.0.0 JupyterHub.cookie_secret = bytes.fromhex\('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'\) --ip 0.0.0.0 --ssl-key /etc/jupyterhub/secrets/mykey.key --ssl-cert /etc/jupyterhub/secrets/mycert.pem"
 
-
-# Add a user and add to userlist
-ARG USER_PW
-RUN USER_PW=$USER_PW
-RUN useradd -g root wonderwoman
-RUN printf "${USER_PW}\n${USER_PW}" | passwd wonderwoman
-RUN mkhomedir_helper wonderwoman
-RUN mkdir -p /hub/user/wonderwoman/
-RUN sudo chown wonderwoman /hub/user/wonderwoman/
-RUN echo "wonderwoman admin" >> /etc/jupyterhub/userlist # this was for docker-compose
-RUN sudo chown wonderwoman /etc/jupyterhub
-RUN sudo chown wonderwoman /etc/jupyterhub
-RUN sudo chgrp shadow /etc/shadow
-RUN sudo chmod g+r /etc/shadow
-RUN sudo usermod -a -G shadow wonderwoman
-
-
-
-CMD bash -c "source /cntk/activate-cntk && jupyterhub -f /etc/jupyterhub/jupyterhub_config.py --JupyterHub.hub_ip=0.0.0.0 --ip 0.0.0.0 --ssl-key /etc/jupyterhub/secrets/mykey.key --ssl-cert /etc/jupyterhub/secrets/mycert.pem"
-
-# RUN sudo chgrp root /root/anaconda3/envs/cntk-py35/bin/jupyterhub-singleuser
+RUN bash -c "source /cntk/activate-cntk && chown wonderwoman /root/anaconda3/envs/cntk-py35/bin/jupyterhub-singleuser"
 # RUN sudo chmod 777 /root/anaconda3/envs/cntk-py35/bin/jupyterhub-singleuser
