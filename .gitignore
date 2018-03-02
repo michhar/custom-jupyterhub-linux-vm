@@ -1,5 +1,6 @@
+*.crt
+*.key
+*.cert
 jupyterhub_cookie_secret
-jupyterhub.crt
-jupyterhub.key
 jupyterhub.sqlite
 jupyterhub.txt
