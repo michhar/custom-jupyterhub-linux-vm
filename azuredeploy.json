@@ -2,12 +2,6 @@
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "dockerImageName": {
-        "type": "string",
-        "metadata": {
-          "description": "Name of docker image to use"
-        }
-      },
     "dnsLabelPrefix": {
       "type": "string",
       "metadata": {
@@ -27,16 +21,14 @@
       }
     }
   },
-  
   "variables": {
     "storageAccountName": "[concat(uniquestring(resourceGroup().id), 'sacustmdata')]",
     "imagePublisher": "microsoft-ads",
     "imageSku": "linuxdsvmubuntu",
     "imageOffer": "linux-data-science-vm-ubuntu",
-    "vmSize": "Standard_DS12v2",
+    "vmSize": "Standard_NC6",
     "nicName": "networkInterface1",
     "vmName": "vm1",
-    "publishingUsername": "vmpublisher1",
     "virtualNetworkName": "virtualNetwork1",
     "publicIPAddressName": "publicIp1",
     "addressPrefix": "10.0.0.0/16",
@@ -134,8 +126,6 @@
         "[concat('Microsoft.Network/networkInterfaces/', variables('nicName'))]"
       ],
       "properties": {
-        "publishingUsername": "[variables('publishingUsername')]",
-        "DOCKER_CUSTOM_IMAGE_NAME": "[parameters('dockerImageName')]",
         "hardwareProfile": {
           "vmSize": "[variables('vmSize')]"
         },
