@@ -150,4 +150,4 @@ RUN chmod 700 /etc/jupyterhub/secrets && \
 # User list
 #RUN bash -c 'source /user/anaconda3/bin/activate py36 && cp ./userlist /etc/jupyterhub/userlist'
 
-CMD bash -c "source /user/anaconda3/bin/activate py36 && jupyterhub -f /etc/jupyterhub/jupyterhub_config.py --JupyterHub.Authenticator.whitelist=\{'user1','user2','user3','user4','user5','user6'\}--JupyterHub.hub_ip=0.0.0.0 --JupyterHub.ip=0.0.0.0 JupyterHub.cookie_secret=bytes.fromhex\('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'\) Spawner.cmd=\['/user/anaconda3/bin/jupyterhub-singleuser'\] --ip 0.0.0.0 --ssl-key /etc/jupyterhub/secrets/mykey.key --ssl-cert /etc/jupyterhub/secrets/mycert.pem"
+CMD bash -c "source /user/anaconda3/bin/activate py36 && jupyterhub -f /etc/jupyterhub/jupyterhub_config.py --JupyterHub.Authenticator.whitelist=\{'user1','user2','user3','user4','user5','user6'\} --JupyterHub.hub_ip=0.0.0.0 --JupyterHub.ip=0.0.0.0 JupyterHub.cookie_secret=bytes.fromhex\('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'\) Spawner.cmd=\['/user/anaconda3/bin/jupyterhub-singleuser'\] --ip 0.0.0.0 --ssl-key /etc/jupyterhub/secrets/mykey.key --ssl-cert /etc/jupyterhub/secrets/mycert.pem"
