@@ -1,9 +1,14 @@
 # custom-azure-dsvm-jupyterhub
-A custom VM config
+
+A custom Data Science Virtual Machine deployment setup with template.
+
+<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmichhar%2Fcustom-azure-dsvm-jupyterhub%2Fmaster%2Fazuredeploy.json" target="_blank">
+    <img src="http://azuredeploy.net/deploybutton.png"/>
+</a>
 
 ARM template instructions coming soon.
 
-## To Test the Docker Image
+## To Build and Test the Docker Image
 
 Create the docker image:
 

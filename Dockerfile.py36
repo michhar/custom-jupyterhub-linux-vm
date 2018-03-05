@@ -1,5 +1,6 @@
+# Build with: docker build --build-arg USER_PW=$USER_PASSWD -t rheartpython/cvopenhack:unix -f Dockerfile.py36 .
+# Run with:  sudo docker run -it -v /var/run/docker.sock:/var/run/docker.sock -p 8000:8000 --expose=8000 rheartpython/cvopenhack:unix
 FROM microsoft/cntk:2.4-cpu-python3.5
-# FROM ubuntu:16.04
 
 LABEL maintainer "ML OpenHack Team"
 ENV CNTK_VERSION="2.4"
@@ -39,15 +40,19 @@ RUN useradd -g root wonderwoman
 RUN printf "${USER_PW}\n${USER_PW}" | passwd wonderwoman
 RUN mkhomedir_helper wonderwoman
 
+# Add some more users
+ADD add_users.sh /
+RUN chmod +x /add_users.sh
+RUN bash -c '. /add_users.sh'
+
 # Get Anaconda Python 3.6 installed into /user
 RUN su - wonderwoman
 RUN cd /home/wonderwoman
-# RUN mkdir -p /user/anaconda3
 RUN curl -O https://repo.continuum.io/archive/Anaconda3-5.1.0-Linux-x86_64.sh
 RUN chmod ug+x Anaconda3-5.1.0-Linux-x86_64.sh
 RUN printf 'yes\nyes\n/user/anaconda3/\nyes\nno' | bash Anaconda3-5.1.0-Linux-x86_64.sh && chmod -R 777 /user/anaconda3/
 
-# Create the conda environment
+# Create the conda environment and change to more permissive permission
 RUN /user/anaconda3/bin/conda create -n py36 python=3.6 && chmod -R 777 /user/anaconda3/envs/py36/
 
 # General Installs
@@ -60,7 +65,7 @@ RUN bash -c 'source /user/anaconda3/bin/activate py36 && pip install --upgrade n
 RUN bash -c 'source /user/anaconda3/bin/activate py36 && pip install tensorflow'
 
 # Object Detection with CNTK and Custom Vision Service Python libraries
-# RUN bash -c 'source /user/anaconda3/bin/activate py36 && pip install https://cntk.ai/PythonWheel/CPU-Only/cntk-2.4-cp36-cp36m-linux_x86_64.whl'
+RUN bash -c 'source /user/anaconda3/bin/activate py36 && pip install https://cntk.ai/PythonWheel/CPU-Only/cntk-2.4-cp36-cp36m-linux_x86_64.whl'
 
 # RUN bash -c 'source /user/anaconda3/bin/activate py36 && git clone https://github.com/Microsoft/CNTK.git /cntk'
 
@@ -143,6 +148,6 @@ RUN chmod 700 /etc/jupyterhub/secrets && \
     chmod 600 /etc/jupyterhub/secrets/*
 
 # User list
-RUN bash -c 'source /user/anaconda3/bin/activate py36 && cp ./userlist /etc/jupyterhub/userlist'
+#RUN bash -c 'source /user/anaconda3/bin/activate py36 && cp ./userlist /etc/jupyterhub/userlist'
 
-CMD bash -c "source /user/anaconda3/bin/activate py36 && jupyterhub -f /etc/jupyterhub/jupyterhub_config.py --JupyterHub.hub_ip=0.0.0.0 --JupyterHub.ip=0.0.0.0 JupyterHub.cookie_secret=bytes.fromhex\('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'\) Spawner.cmd=\['/user/anaconda3/bin/jupyterhub-singleuser'\] --ip 0.0.0.0 --ssl-key /etc/jupyterhub/secrets/mykey.key --ssl-cert /etc/jupyterhub/secrets/mycert.pem"
+CMD bash -c "source /user/anaconda3/bin/activate py36 && jupyterhub -f /etc/jupyterhub/jupyterhub_config.py --JupyterHub.Authenticator.whitelist=\{'user1','user2','user3','user4','user5','user6'\}--JupyterHub.hub_ip=0.0.0.0 --JupyterHub.ip=0.0.0.0 JupyterHub.cookie_secret=bytes.fromhex\('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'\) Spawner.cmd=\['/user/anaconda3/bin/jupyterhub-singleuser'\] --ip 0.0.0.0 --ssl-key /etc/jupyterhub/secrets/mykey.key --ssl-cert /etc/jupyterhub/secrets/mycert.pem"
