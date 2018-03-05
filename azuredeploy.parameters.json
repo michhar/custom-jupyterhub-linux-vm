@@ -10,6 +10,9 @@
     },
     "dnsLabelPrefix": {
       "value": "GEN-UNIQUE"
+    },
+    "dockerImageName": {
+      "value": "rheartpython/cvopenhack:unix"
     }
   }
 }
