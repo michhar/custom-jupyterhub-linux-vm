@@ -36,6 +36,7 @@
     "vmSize": "Standard_DS12v2",
     "nicName": "networkInterface1",
     "vmName": "vm1",
+    "publishingUsername": "vmpublisher1",
     "virtualNetworkName": "virtualNetwork1",
     "publicIPAddressName": "publicIp1",
     "addressPrefix": "10.0.0.0/16",
