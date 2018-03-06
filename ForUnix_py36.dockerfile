@@ -6,7 +6,7 @@ LABEL maintainer "ML OpenHack Team"
 ENV CNTK_VERSION="2.4"
 ENV TORCH_VERSION="0.3.0.post4-cp36-cp36m-linux_x86_64"
 
-# Docker install
+# Docker install etc. (first repo add is for libpython3.6-dev)
 RUN apt-get update && apt-get install -y \
     apt-transport-https \
     ca-certificates \
@@ -52,14 +52,17 @@ RUN curl -O https://repo.continuum.io/archive/Anaconda3-5.1.0-Linux-x86_64.sh
 RUN chmod ug+x Anaconda3-5.1.0-Linux-x86_64.sh
 RUN printf 'yes\nyes\n/user/anaconda3/\nyes\nno' | bash Anaconda3-5.1.0-Linux-x86_64.sh && chmod -R 777 /user/anaconda3/
 
+# For CNTK (libpython3.6-dev needed)
+RUN add-apt-repository ppa:jonathonf/python-3.6 && apt-get update && apt-get install -y python3.6 libpython3.6-dev
+
 # Create the conda environment and change to more permissive permission
 RUN /user/anaconda3/bin/conda create -n py36 python=3.6 && chmod -R 777 /user/anaconda3/envs/py36/
 
 # General Installs
 # RUN ls /user/anaconda3/envs/bin/
-RUN bash -c 'source /user/anaconda3/bin/activate py36 && conda install -y -n py36 cython boost libpython3.6-dev'
+RUN bash -c 'source /user/anaconda3/bin/activate py36 && conda install -y -n py36 cython boost'
 RUN bash -c 'source /user/anaconda3/bin/activate py36 && pip install dlib easydict pyyaml'
-RUN bash -c 'source /user/anaconda3/bin/activate py36 && pip install --upgrade numpy opencv-python jupyterhub notebook scikit-learn pandas matplotlib scipy'
+RUN bash -c 'source /user/anaconda3/bin/activate py36 && pip install --upgrade numpy opencv-python jupyterhub notebook scikit-learn pandas matplotlib scipy pytest'
 
 # Tensorflow latest
 RUN bash -c 'source /user/anaconda3/bin/activate py36 && pip install tensorflow'
