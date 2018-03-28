@@ -1,14 +1,29 @@
-# custom-azure-dsvm-jupyterhub
+# A Custom Azure Linux VM with JupyterHub
 
 A custom Data Science Virtual Machine deployment setup with template.
+
+Python:
+
+* Python 3.6 (Anaconda release)
+* JupyterHub 1.7.2
+
+Deep Learning:
+
+* TensorFlow 1.7.0-rc1
+* PyTorch 0.3.0.post4-cp36
+* CNTK 2.4
+
+Other:
+
+* Custom Vision Python SDK - latest
 
 <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmichhar%2Fcustom-azure-dsvm-jupyterhub%2Fmaster%2Fazuredeploy.json" target="_blank">
     <img src="http://azuredeploy.net/deploybutton.png"/>
 </a>
 
-ARM template instructions coming soon.
+See the ARM template (`azuredeploy.json` and `azuredeploy.paramters.json`) for the specs on deploying to Azure.
 
-## To Build and Test the Docker Image
+## To build the Docker image
 
 Create the docker image:
 
@@ -27,12 +42,29 @@ Create the docker image:
 
     `docker build --build-arg USER_PW=$USER_PASSWD -t rheartpython/cvworkshop .`
 
+ Push the image to Dockerhub so that you and others (namely the VM through the ARM template) can use it.
+
+## Run the image as a Jupyterhub system
+
 Run the docker image locally (on a Unix-based system):
 
-* Run docker run command as follows:
+* Ensure you have Docker installed (Docker for Windows or Docker for Mac are recommended)
+* Run the following docker `run` command at a command prompt as follows (may need `sudo` to enhance priviledges on Unix systems) (for a command prompt in Windows, search for "cmd"):
  
-     `sudo docker run -it -v /var/run/docker.sock:/var/run/docker.sock -p 8000:8000 --expose=8000 rheartpython/cvworkshop`
+     `docker run -it -v /var/run/docker.sock:/var/run/docker.sock -p 8788:8788 --expose=8788 rheartpython/cvopenhack:unix`
      
- * Log into jupyterhub at https://0.0.0.0:8000 with the user `wonderwoman` and the system variable password you used and you should also get an Admin panel to add more users to the jupyterhub.
+ * Log into jupyterhub at https://0.0.0.0:8788 or https://localhost:8788 with the user `wonderwoman` and the system variable password you used when building it and you should also get an Admin panel to add more users to the jupyterhub or make them Admin as well so they can install stuff.
+
+ ## Credits
+
+ * This work is based on the following projects:
+   * Data Science Virtual Machine - https://github.com/Azure/DataScienceVM
+   * William Buchwalter's https://github.com/wbuchwalter/deep-learning-bootcamp-vm
+   * Ari Bornstein's https://github.com/aribornstein/CVWorkshop
+
+## Contributing
+
+* If you'd like to contribute to this project, fork this repo and make a Pull Request.
+* If you see an problems or want a feature, open an Issue.
+* Don't panic.
  
- Push the image to Dockerhub so that you and others (namely the VM through the ARM template) can use it.
