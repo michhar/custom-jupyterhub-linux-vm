@@ -94,7 +94,6 @@ RUN $CONDA_DIR/bin/conda create -n py36
 # General Installs
 RUN bash -c 'source /user/anaconda3/bin/activate py36 && conda install -y -n py36 cython boost'
 RUN bash -c 'source /user/anaconda3/bin/activate py36 && pip install dlib easydict pyyaml'
-RUN bash -c 'source /user/anaconda3/bin/activate py36 && pip install -r requirements.txt'
 
 # Tensorflow and Keras
 RUN bash -c 'source /user/anaconda3/bin/activate py36 && pip install tensorflow==${TENSORFLOW_VERSION}'

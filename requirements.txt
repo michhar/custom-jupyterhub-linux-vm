@@ -87,6 +87,7 @@ oauthlib==2.0.6
 pandas==0.21.0
 pandocfilters==1.4.2
 parso==0.1.1
+Pillow==5.0.0
 pickleshare==0.7.4
 prompt-toolkit==1.0.15
 protobuf==3.5.2.post1
@@ -94,12 +95,10 @@ pycparser==2.18
 Pygments==2.2.0
 PyJWT==1.5.3
 pyOpenSSL==17.5.0
-pypiwin32==220
 python-dateutil==2.7.2
 python-dotenv==0.7.1
 pytz==2018.3
 pywin32-ctypes==0.1.2
-pywinpty==0.5.1
 pyzmq==17.0.0
 qtconsole==4.3.1
 requests==2.18.4
@@ -118,9 +117,13 @@ websocket-client==0.46.0
 Werkzeug==0.14.1
 widgetsnbextension==3.1.4
 wincertstore==0.2
-opencv-python==3.3.0
 jupyterhub==0.7.2
 scikit-learn==0.19.1
-matplotlib==1.5.1
-scipy==0.17.1
+matplotlib==2.2.2
+scipy==1.0.1
 pytest==2.9.2
+selectivesearch==0.4
+scikit-image==0.13.1
+easydict==1.7
+opencv-python==3.4.0.12
+
