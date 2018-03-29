@@ -73,7 +73,21 @@
           "publicIPAllocationMethod": "[variables('publicIPAddressType')]",
           "dnsSettings": {
             "domainNameLabel": "[parameters('dnsLabelPrefix')]"
-          },
+          }
+        }
+      },
+      {
+        "apiVersion": "2016-04-30-preview",
+        "type": "extensions",
+        "name": "config-app",
+        "location": "[resourceGroup().location]",
+        "dependsOn": [
+          "[concat('Microsoft.Compute/virtualMachines/', variables('vmName'))]"
+        ],
+        "tags": {
+          "displayName": "config-app"
+        },
+        "properties": {
           "publisher": "Microsoft.Azure.Extensions",
           "type": "CustomScript",
           "typeHandlerVersion": "2.0",
