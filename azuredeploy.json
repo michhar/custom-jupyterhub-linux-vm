@@ -25,7 +25,7 @@
     "storageAccountName": "[concat(uniquestring(resourceGroup().id), 'sacustmdata')]",
     "imagePublisher": "Canonical",
     "imageOffer": "UbuntuServer",
-    "sku": "16.04-LTS",
+    "sku": "linuxdsvmubuntu",
     "nicName": "networkInterface1",
     "vmName": "MyUbuntuVM",
     "vmSize": "Standard_D12_v2",
