@@ -9,7 +9,7 @@ Python:
 
 Deep Learning:
 
-* TensorFlow 1.7.0-rc1
+* TensorFlow 1.6.0
 * PyTorch 0.3.0.post4-cp36
 * CNTK 2.4
 
