@@ -94,20 +94,18 @@ RUN $CONDA_DIR/bin/conda create -n py36
 # General Installs
 RUN bash -c 'source /user/anaconda3/bin/activate py36 && conda install -y -n py36 cython boost'
 RUN bash -c 'source /user/anaconda3/bin/activate py36 && pip install dlib easydict pyyaml'
-RUN bash -c 'source /user/anaconda3/bin/activate py36 && pip install --upgrade numpy opencv-python jupyterhub==0.7.2 notebook scikit-learn pandas==0.22.0 matplotlib scipy pytest dask==0.17.2'
+RUN bash -c 'source /user/anaconda3/bin/activate py36 && pip install -r requirements.txt'
 
-# Tensorflow latest
+# Tensorflow and Keras
 RUN bash -c 'source /user/anaconda3/bin/activate py36 && pip install tensorflow==${TENSORFLOW_VERSION}'
 RUN bash -c 'source /user/anaconda3/bin/activate py36 && pip install keras==${KERAS_VERSION}'
 
-# Object Detection with CNTK and Custom Vision Service Python libraries
+# CNTK and Custom Vision Service Python libraries
 RUN bash -c 'source /user/anaconda3/bin/activate py36 && pip install https://cntk.ai/PythonWheel/CPU-Only/cntk-${CNTK_VERSION}.whl'
 
 USER root
 
-# WORKDIR /cntk/Examples/Image/Detection/FasterRCNN
 RUN bash -c 'git config --system core.longpaths true'
-
 RUN bash -c 'source /user/anaconda3/bin/activate py36 && pip install "git+https://github.com/Azure/azure-sdk-for-python#egg=azure-cognitiveservices-vision-customvision&subdirectory=azure-cognitiveservices-vision-customvision"'
 
 COPY . /hub/user/
@@ -121,6 +119,7 @@ RUN cp *.zip /hub/user/data
 WORKDIR /hub/user/
 
 RUN bash -c 'source /user/anaconda3/bin/activate py36 && pip install -r cli-requirements.txt'
+RUN bash -c 'source /user/anaconda3/bin/activate py36 && pip install -r requirements.txt'
 
 # PyTorch
 RUN bash -c 'source /user/anaconda3/bin/activate py36 && pip install http://download.pytorch.org/whl/cu80/torch-${PYTORCH_VERSION}.whl'
