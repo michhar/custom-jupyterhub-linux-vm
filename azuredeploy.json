@@ -38,7 +38,7 @@
     "storageAccountName": "[concat(uniquestring(resourceGroup().id), 'sacustmdata')]",
     "imagePublisher": "Canonical",
     "imageOffer": "UbuntuServer",
-    "sku": "[parameters('ubuntuOSVersion')]",
+    "imageSku": "[parameters('ubuntuOSVersion')]",
     "nicName": "networkInterface1",
     "vmName": "MyUbuntuVM",
     "vmSize": "Standard_D12_v2",
