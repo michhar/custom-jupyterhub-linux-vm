@@ -43,6 +43,3 @@ azure-cli-sql==2.0.15
 azure-cli-storage==2.0.19
 azure-cli-vm==2.0.18
 azure-ml-api-sdk
-tensorflow==1.5.0
-tensorflow-tensorboard==1.5.1
-keras==2.1.4

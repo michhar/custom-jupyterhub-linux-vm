@@ -30,17 +30,15 @@ Create the docker image:
 * In the `secrets` folder create some certificate and key files with `openssl` and name them `jupyterhub.crt` and `jupyterhub.key`, respectively.
   * To create these:
   
-      `openssl req \
-        -newkey rsa:2048 -nodes -keyout domain.key \
-        -x509 -days 365 -out domain.crt`
+      `openssl req -new -newkey rsa:2048 -nodes -keyout jupyterhub.key -x509 -days 365 -out jupyterhub.crt`
 
 * Create a system var called `$USER_PASSWD` with a password for an admin to jupyterhub user.  This will feed into a sys var in the dockerfile/image.  E.g.:
 
     `export USER_PASSWD=foobar`
     
-* Run docker build command as follows (name the image anything you like, here it's `rheartpython/cvworkshop` where `rheartpython` is the user name of mine on Dockerhub):
+* Run docker build command as follows (name the image anything you like, here it's `rheartpython/cvopenhack` where `rheartpython` is the user name of mine on Dockerhub):
 
-    `docker build --build-arg USER_PW=$USER_PASSWD -t rheartpython/cvworkshop .`
+    `docker build --build-arg USER_PW=$USER_PASSWD -t rheartpython/cvopenhack -f ForUnix_py36.dockerfile .`
 
  Push the image to Dockerhub so that you and others (namely the VM through the ARM template) can use it.
 

@@ -4,8 +4,10 @@ FROM microsoft/cntk:2.4-cpu-python3.5
 USER root
 
 LABEL maintainer "ML OpenHack Team (contact michhar <at> microsoft.com)"
-ENV CNTK_VERSION="2.4"
-ENV TORCH_VERSION="0.3.0.post4-cp36-cp36m-linux_x86_64"
+ENV PYTORCH_VERSION="0.3.0.post4-cp36-cp36m-linux_x86_64"
+ENV TENSORFLOW_VERSION="1.6.0"
+ENV CNTK_VERSION="2.4-cp36-cp36m-linux_x86_64"
+ENV KERAS_VERSION="2.1.4"
 
 # Docker install etc. (first repo add is for libpython3.6-dev)
 RUN apt-get update && apt-get install -y \
@@ -37,7 +39,7 @@ RUN apt-get update && apt-get install -y docker-ce && apt-get install -y --no-in
 ARG USER_PW
 RUN USER_PW=$USER_PW
 
-# Add some more users
+# Add some more users (to remove windows endings may have to: tr -d '\015' <DOS-file >UNIX-file)
 ADD add_users.sh /
 RUN chmod +x /add_users.sh
 RUN bash -c '. /add_users.sh'
@@ -46,7 +48,7 @@ RUN bash -c '. /add_users.sh'
 ENV CONDA_DIR=/user/anaconda3/ \
     SHELL=/bin/bash \
     NB_USER=wonderwoman \
-    NB_UID=1000 \
+    NB_UID=999 \
     NB_GID=100 \
     LC_ALL=en_US.UTF-8 \
     LANG=en_US.UTF-8 \
@@ -92,13 +94,14 @@ RUN $CONDA_DIR/bin/conda create -n py36
 # General Installs
 RUN bash -c 'source /user/anaconda3/bin/activate py36 && conda install -y -n py36 cython boost'
 RUN bash -c 'source /user/anaconda3/bin/activate py36 && pip install dlib easydict pyyaml'
-RUN bash -c 'source /user/anaconda3/bin/activate py36 && pip install --upgrade numpy opencv-python jupyterhub==0.7.2 notebook scikit-learn pandas matplotlib scipy pytest'
+RUN bash -c 'source /user/anaconda3/bin/activate py36 && pip install --upgrade numpy opencv-python jupyterhub==0.7.2 notebook scikit-learn pandas==0.22.0 matplotlib scipy pytest dask==0.17.2'
 
 # Tensorflow latest
-RUN bash -c 'source /user/anaconda3/bin/activate py36 && pip install tensorflow==1.7.0-rc1'
+RUN bash -c 'source /user/anaconda3/bin/activate py36 && pip install tensorflow==${TENSORFLOW_VERSION}'
+RUN bash -c 'source /user/anaconda3/bin/activate py36 && pip install keras==${KERAS_VERSION}'
 
 # Object Detection with CNTK and Custom Vision Service Python libraries
-RUN bash -c 'source /user/anaconda3/bin/activate py36 && pip install https://cntk.ai/PythonWheel/CPU-Only/cntk-2.4-cp36-cp36m-linux_x86_64.whl'
+RUN bash -c 'source /user/anaconda3/bin/activate py36 && pip install https://cntk.ai/PythonWheel/CPU-Only/cntk-${CNTK_VERSION}.whl'
 
 USER root
 
@@ -113,15 +116,14 @@ RUN mkdir /hub/user/data
 # To get data
 RUN curl -O https://challenge.blob.core.windows.net/challengefiles/gear_images.zip
 RUN curl -O https://challenge.blob.core.windows.net/challengefiles/gear_images_testset.zip
-RUN curl -O https://challenge.blob.core.windows.net/challengefiles/summit_post_images.zip
-COPY *.zip /hub/user/data
+RUN cp *.zip /hub/user/data
 
 WORKDIR /hub/user/
 
 RUN bash -c 'source /user/anaconda3/bin/activate py36 && pip install -r cli-requirements.txt'
 
 # PyTorch
-RUN bash -c 'source /user/anaconda3/bin/activate py36 && pip install http://download.pytorch.org/whl/cu80/torch-${TORCH_VERSION}.whl'
+RUN bash -c 'source /user/anaconda3/bin/activate py36 && pip install http://download.pytorch.org/whl/cu80/torch-${PYTORCH_VERSION}.whl'
 RUN bash -c 'source /user/anaconda3/bin/activate py36 && pip install torchvision==0.2.0'
 # Install Torchnet, a high-level framework for PyTorch
 RUN bash -c 'source /user/anaconda3/bin/activate py36 && pip install git+https://github.com/pytorch/tnt.git@master'
