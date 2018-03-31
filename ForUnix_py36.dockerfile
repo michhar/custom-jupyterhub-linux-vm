@@ -28,6 +28,8 @@ RUN add-apt-repository \
 RUN apt-get update && apt-get install -y docker-ce && apt-get install -y --no-install-recommends \
         cmake \
         git \
+        zip \
+        unzip \
         libopencv-dev \
         nvidia-cuda-toolkit \
         && \
@@ -39,16 +41,16 @@ RUN apt-get update && apt-get install -y docker-ce && apt-get install -y --no-in
 ARG USER_PW
 RUN USER_PW=$USER_PW
 
-# Add some more users (to remove windows endings may have to: tr -d '\015' <DOS-file >UNIX-file)
-ADD add_users.sh /
-RUN chmod +x /add_users.sh
-RUN bash -c '. /add_users.sh'
+# # # Add some more users (to remove windows endings may have to: tr -d '\015' <DOS-file >UNIX-file)
+# ADD add_users.sh /
+# RUN chmod +x /add_users.sh
+# RUN bash -c '. /add_users.sh'
 
 # Configure environment
 ENV CONDA_DIR=/user/anaconda3/ \
     SHELL=/bin/bash \
     NB_USER=wonderwoman \
-    NB_UID=999 \
+    NB_UID=1000 \
     NB_GID=100 \
     LC_ALL=en_US.UTF-8 \
     LANG=en_US.UTF-8 \
@@ -57,18 +59,55 @@ ENV PATH=$CONDA_DIR/bin:$PATH \
     HOME=/home/$NB_USER
 
 # ADD fix-permissions /usr/bin/fix-permissions
-# Create jovyan user with UID=1000 and in the 'users' group
+# Create users with UID=1000 and in the 'users' group
 # and make sure these dirs are writable by the `users` group.
-RUN useradd -m -s /bin/bash -N -u $NB_UID $NB_USER && \
+RUN useradd -u $NB_UID -m -s /bin/bash -N $NB_USER && \
     mkdir -p $CONDA_DIR && \
     chown $NB_USER:$NB_GID $CONDA_DIR && \
     chmod g+w /etc/passwd /etc/group && \
     chmod -R 777 $HOME && \
     chmod -R 777 $CONDA_DIR
-
 RUN printf "${USER_PW}\n${USER_PW}" | passwd wonderwoman
 
-USER $NB_UID
+ENV NB_USER=user1
+RUN useradd -m -s /bin/bash -N $NB_USER && \
+    mkdir -p $CONDA_DIR && \
+    chown $NB_USER:$NB_GID $CONDA_DIR && \
+    chmod g+w /etc/passwd /etc/group && \
+    chmod -R 777 $HOME && \
+    chmod -R 777 $CONDA_DIR
+RUN printf "${USER_PW}\n${USER_PW}" | passwd $NB_USER
+
+ENV NB_USER=user2
+RUN useradd -m -s /bin/bash -N $NB_USER && \
+    mkdir -p $CONDA_DIR && \
+    chown $NB_USER:$NB_GID $CONDA_DIR && \
+    chmod g+w /etc/passwd /etc/group && \
+    chmod -R 777 $HOME && \
+    chmod -R 777 $CONDA_DIR
+RUN printf "${USER_PW}\n${USER_PW}" | passwd $NB_USER
+
+ENV NB_USER=user3
+RUN useradd -m -s /bin/bash -N $NB_USER && \
+    mkdir -p $CONDA_DIR && \
+    chown $NB_USER:$NB_GID $CONDA_DIR && \
+    chmod g+w /etc/passwd /etc/group && \
+    chmod -R 777 $HOME && \
+    chmod -R 777 $CONDA_DIR
+RUN printf "${USER_PW}\n${USER_PW}" | passwd $NB_USER
+
+ENV NB_USER=user4
+RUN useradd -m -s /bin/bash -N $NB_USER && \
+    mkdir -p $CONDA_DIR && \
+    chown $NB_USER:$NB_GID $CONDA_DIR && \
+    chmod g+w /etc/passwd /etc/group && \
+    chmod -R 777 $HOME && \
+    chmod -R 777 $CONDA_DIR
+RUN printf "${USER_PW}\n${USER_PW}" | passwd $NB_USER
+
+
+ENV NB_USER=wonderwoman
+USER $NB_USER
 
 # Setup work directory for backward-compatibility
 RUN mkdir /home/$NB_USER/work && \
@@ -84,9 +123,15 @@ RUN cd /tmp && \
     $CONDA_DIR/bin/conda config --system --set show_channel_urls true && \
     $CONDA_DIR/bin/conda update --all --quiet --yes && \
     conda clean -tipsy && \
-    rm -rf /home/$NB_USER/.cache/yarn && \
-    chmod -R 777 $CONDA_DIR && \
+    rm -rf /home/$NB_USER/.cache/yarn
+
+USER root
+
+RUN chmod -R 777 $CONDA_DIR && \
     chmod -R 777 /home/$NB_USER
+
+ENV NB_USER=wonderwoman
+USER $NB_USER
 
 # Create the conda environment
 RUN $CONDA_DIR/bin/conda create -n py36
@@ -109,11 +154,11 @@ RUN bash -c 'source /user/anaconda3/bin/activate py36 && pip install "git+https:
 
 COPY . /hub/user/
 
-RUN mkdir /hub/user/data
+RUN mkdir /data
 # To get data
 RUN curl -O https://challenge.blob.core.windows.net/challengefiles/gear_images.zip
 RUN curl -O https://challenge.blob.core.windows.net/challengefiles/gear_images_testset.zip
-RUN cp *.zip /hub/user/data
+RUN cp *.zip /data
 
 WORKDIR /hub/user/
 
@@ -126,6 +171,19 @@ RUN bash -c 'source /user/anaconda3/bin/activate py36 && pip install torchvision
 # Install Torchnet, a high-level framework for PyTorch
 RUN bash -c 'source /user/anaconda3/bin/activate py36 && pip install git+https://github.com/pytorch/tnt.git@master'
 RUN bash -c 'source /user/anaconda3/bin/activate py36 && pip install torchvision psutil'
+
+### Conda folder permissions ###
+
+ENV NB_USER=wonderwoman
+RUN chmod -R 777 $CONDA_DIR
+ENV NB_USER=user1
+RUN chmod -R 777 $CONDA_DIR
+ENV NB_USER=user2
+RUN chmod -R 777 $CONDA_DIR
+ENV NB_USER=user3
+RUN chmod -R 777 $CONDA_DIR
+ENV NB_USER=user4
+RUN chmod -R 777 $CONDA_DIR
 
 ### Jupyterhub setup ###
 
@@ -169,4 +227,4 @@ RUN chmod 700 /etc/jupyterhub/secrets && \
 # For CNTK (libpython3.6-dev needed)
 RUN add-apt-repository ppa:jonathonf/python-3.6 && apt-get update && apt-get install -y libpython3.6-dev
 
-CMD bash -c "source /user/anaconda3/bin/activate py36 && jupyterhub -f /etc/jupyterhub/jupyterhub_config.py --JupyterHub.Authenticator.whitelist=\{\'user1\',\'user2\',\'user3\',\'user4\',\'user5\',\'user6\'\} --JupyterHub.hub_ip='' --JupyterHub.ip='' JupyterHub.cookie_secret=bytes.fromhex\('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'\) Spawner.cmd=\['/user/anaconda3/bin/jupyterhub-singleuser'\] --ip '' --port 8788 --ssl-key /etc/jupyterhub/secrets/mykey.key --ssl-cert /etc/jupyterhub/secrets/mycert.pem"
+CMD bash -c "source /user/anaconda3/bin/activate py36 && jupyterhub -f /etc/jupyterhub/jupyterhub_config.py --JupyterHub.Authenticator.whitelist=\{\'user1\',\'user2\',\'user3\',\'user4\'\} --JupyterHub.hub_ip='' --JupyterHub.ip='' JupyterHub.cookie_secret=bytes.fromhex\('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'\) Spawner.cmd=\['/user/anaconda3/bin/jupyterhub-singleuser'\] --ip '' --port 8788 --ssl-key /etc/jupyterhub/secrets/mykey.key --ssl-cert /etc/jupyterhub/secrets/mycert.pem"

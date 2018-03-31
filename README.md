@@ -2,6 +2,12 @@
 
 A custom Data Science Virtual Machine deployment setup with template.
 
+<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmichhar%2Fcustom-azure-dsvm-jupyterhub%2Fmaster%2Fazuredeploy.json" target="_blank">
+    <img src="http://azuredeploy.net/deploybutton.png"/>
+</a>
+
+## Components
+
 Python:
 
 * Python 3.6 (Anaconda release)
@@ -17,9 +23,10 @@ Other:
 
 * Custom Vision Python SDK - latest
 
-<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmichhar%2Fcustom-azure-dsvm-jupyterhub%2Fmaster%2Fazuredeploy.json" target="_blank">
-    <img src="http://azuredeploy.net/deploybutton.png"/>
-</a>
+Users:
+
+* 5 users:  wonderwoman, user1, user2, user3, user4
+* Password is the one used to build the image.  The default is "cheese".
 
 See the ARM template (`azuredeploy.json` and `azuredeploy.paramters.json`) for the specs on deploying to Azure.
 
@@ -36,7 +43,7 @@ Create the docker image:
 
     `export USER_PASSWD=foobar`
     
-* Run docker build command as follows (name the image anything you like, here it's `rheartpython/cvopenhack` where `rheartpython` is the user name of mine on Dockerhub):
+* Run docker build command as follows (name the image anything you like, here it's `rheartpython/cvopenhack` where `rheartpython` is the user name of mine on Dockerhub).  Note, on Windows it is recommended to run this command in Git Bash ([Download Git for Windodws here](https://git-scm.com/downloads)):
 
     `docker build --build-arg USER_PW=$USER_PASSWD -t rheartpython/cvopenhack -f ForUnix_py36.dockerfile .`
 
@@ -49,7 +56,7 @@ Run the docker image locally (on a Unix-based system):
 * Ensure you have Docker installed (Docker for Windows or Docker for Mac are recommended)
 * Run the following docker `run` command at a command prompt as follows (may need `sudo` to enhance priviledges on Unix systems) (for a command prompt in Windows, search for "cmd"):
  
-     `docker run -it -v /var/run/docker.sock:/var/run/docker.sock -p 8788:8788 --expose=8788 rheartpython/cvopenhack:unix`
+     `docker run -it -v /var/run/docker.sock:/var/run/docker.sock -p 8788:8788 --expose=8788 rheartpython/cvopenhack:latest`
      
  * Log into jupyterhub at https://0.0.0.0:8788 or https://localhost:8788 with the user `wonderwoman` and the system variable password you used when building it and you should also get an Admin panel to add more users to the jupyterhub or make them Admin as well so they can install stuff.
 

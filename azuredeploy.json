@@ -35,7 +35,7 @@
     "OSDiskName": "osdiskforlinuxsimple",
     "vmSize": "Standard_A1",
     "DataDiskName": "datadiskforlinuxsimple",
-    "sku": "16.04-LTS",
+    "sku": "16.04.0-LTS",
     "nicName": "[parameters('vmName')]",
     "addressPrefix": "10.0.0.0/16",
     "subnetName": "Subnet",
