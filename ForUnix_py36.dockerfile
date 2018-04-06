@@ -174,15 +174,6 @@ RUN bash -c 'source /user/anaconda3/bin/activate py36 && pip install torchvision
 
 ### Conda folder permissions ###
 
-ENV NB_USER=wonderwoman
-RUN chmod -R 777 $CONDA_DIR
-ENV NB_USER=user1
-RUN chmod -R 777 $CONDA_DIR
-ENV NB_USER=user2
-RUN chmod -R 777 $CONDA_DIR
-ENV NB_USER=user3
-RUN chmod -R 777 $CONDA_DIR
-ENV NB_USER=user4
 RUN chmod -R 777 $CONDA_DIR
 
 ### Jupyterhub setup ###
