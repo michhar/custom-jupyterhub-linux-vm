@@ -17,8 +17,8 @@ Deep Learning:
 
 * TensorFlow 1.6.0
 * PyTorch 0.3.0.post4-cp36
-* Torchnet
-* Torchvision
+* PyTorchNet 0.0.1
+* Torchvision 0.2.0
 * CNTK 2.4
 
 Other:
