@@ -51,7 +51,7 @@
       "vnetID": "[resourceId('Microsoft.Network/virtualNetworks',variables('virtualNetworkName'))]",
       "subnet1Ref": "[concat(variables('vnetID'),'/subnets/',variables('subnet1Name'))]",
       "apiVersion": "2015-06-15",
-      "scriptUri": "https://raw.githubusercontent.com/wbuchwalter/deep-learning-bootcamp-vm/master/install.sh"
+      "scriptUri": "https://raw.githubusercontent.com/michhar/custom-azure-dsvm-jupyterhub/master/install.sh"
     },
     "resources": [
       {
