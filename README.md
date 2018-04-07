@@ -2,7 +2,7 @@
 
 A custom Data Science Virtual Machine deployment setup with template.
 
-<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmichhar%2Fcustom-azure-dsvm-jupyterhub%2Fmaster%2Fazuredeploy_dsvmbase.json" target="_blank">
+<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmichhar%2Fcustom-azure-dsvm-jupyterhub%2Fmaster%2Fazuredeploy.json" target="_blank">
     <img src="http://azuredeploy.net/deploybutton.png"/>
 </a>
 
@@ -17,11 +17,13 @@ Deep Learning:
 
 * TensorFlow 1.6.0
 * PyTorch 0.3.0.post4-cp36
+* Torchnet
+* Torchvision
 * CNTK 2.4
 
 Other:
 
-* Custom Vision Python SDK - latest
+* Custom Vision Python SDK (azure-cognitiveservices-vision-customvision) 0.1.0
 
 Users:
 
@@ -29,6 +31,10 @@ Users:
 * Password is the one used to build the image.  The default is "cheese".
 
 See the ARM template (`azuredeploy.json` and `azuredeploy.paramters.json`) for the specs on deploying to Azure.
+
+Data:
+
+* Small image dataset under `/data`
 
 ## To build the Docker image
 
