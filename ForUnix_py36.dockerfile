@@ -149,8 +149,7 @@ RUN bash -c 'source /user/anaconda3/bin/activate py36 && pip install https://cnt
 
 USER root
 
-RUN bash -c 'git config --system core.longpaths true'
-RUN bash -c 'source /user/anaconda3/bin/activate py36 && pip install "git+https://github.com/Azure/azure-sdk-for-python#egg=azure-cognitiveservices-vision-customvision&subdirectory=azure-cognitiveservices-vision-customvision"'
+RUN bash -c 'source /user/anaconda3/bin/activate py36 && pip install pip install azure-cognitiveservices-vision-customvision'
 
 COPY . /hub/user/
 
