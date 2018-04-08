@@ -1,6 +1,8 @@
-# A Custom Azure Linux VM with JupyterHub
+# A Custom Linux VM with JupyterHub Built with Docker
 
-A custom Data Science Virtual Machine deployment setup with template.
+A custom Virtual Machine for Data Science - deployment to Azure, setup with template.
+
+* **For Cloud or Local Deployment**
 
 <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmichhar%2Fcustom-azure-dsvm-jupyterhub%2Fmaster%2Fazuredeploy.json" target="_blank">
     <img src="http://azuredeploy.net/deploybutton.png"/>
@@ -20,10 +22,13 @@ Deep Learning:
 * PyTorchNet 0.0.1
 * Torchvision 0.2.0
 * CNTK 2.4
+* Keras 2.1.4
 
 Other:
 
 * Custom Vision Python SDK (azure-cognitiveservices-vision-customvision) 0.1.0
+* Azure CLI 2.0.22
+* Azure ML CLI 0.1.0a27.post3
 
 Users:
 
