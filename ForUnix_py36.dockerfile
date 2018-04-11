@@ -3,7 +3,7 @@
 FROM microsoft/cntk:2.4-cpu-python3.5
 USER root
 
-LABEL maintainer "ML OpenHack Team (contact michhar <at> microsoft.com)"
+LABEL maintainer "Micheleen Harris (contact michhar <at> microsoft.com)"
 ENV PYTORCH_VERSION="0.3.0.post4-cp36-cp36m-linux_x86_64"
 ENV TENSORFLOW_VERSION="1.6.0"
 ENV CNTK_VERSION="2.4-cp36-cp36m-linux_x86_64"
@@ -149,7 +149,7 @@ RUN bash -c 'source /user/anaconda3/bin/activate py36 && pip install https://cnt
 
 USER root
 
-RUN bash -c 'source /user/anaconda3/bin/activate py36 && pip install pip install azure-cognitiveservices-vision-customvision'
+RUN bash -c 'source /user/anaconda3/bin/activate py36 && pip install azure-cognitiveservices-vision-customvision'
 
 COPY . /hub/user/
 
@@ -207,14 +207,17 @@ RUN bash -c "source /user/anaconda3/bin/activate py36 && echo c.LocalAuthenticat
 RUN bash -c "source /user/anaconda3/bin/activate py36 && echo c.Authenticator.admin_users={\'wonderwoman\'} >> /etc/jupyterhub/jupyterhub_config.py"
 
 # Copy TLS certificate and key
-ENV SSL_CERT /etc/jupyterhub/secrets/mycert.pem
-ENV SSL_KEY /etc/jupyterhub/secrets/mykey.key
-COPY ./secrets/*.crt $SSL_CERT
-COPY ./secrets/*.key $SSL_KEY
 RUN chmod 700 /etc/jupyterhub/secrets && \
     chmod 600 /etc/jupyterhub/secrets/*
 
 # For CNTK (libpython3.6-dev needed)
 RUN add-apt-repository ppa:jonathonf/python-3.6 && apt-get update && apt-get install -y libpython3.6-dev
 
-CMD bash -c "source /user/anaconda3/bin/activate py36 && jupyterhub -f /etc/jupyterhub/jupyterhub_config.py --JupyterHub.Authenticator.whitelist=\{\'user1\',\'user2\',\'user3\',\'user4\'\} --JupyterHub.hub_ip='' --JupyterHub.ip='' JupyterHub.cookie_secret=bytes.fromhex\('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'\) Spawner.cmd=\['/user/anaconda3/bin/jupyterhub-singleuser'\] --ip '' --port 8788 --ssl-key /etc/jupyterhub/secrets/mykey.key --ssl-cert /etc/jupyterhub/secrets/mycert.pem"
+CMD bash -c "source /user/anaconda3/bin/activate py36 \
+    && jupyterhub -f /etc/jupyterhub/jupyterhub_config.py \
+    --JupyterHub.Authenticator.whitelist=\{\'user1\',\'user2\',\'user3\',\'user4\'\} \
+    --JupyterHub.hub_ip='' --JupyterHub.ip='' \
+    JupyterHub.cookie_secret=bytes.fromhex\('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'\) \
+    Spawner.cmd=\['/user/anaconda3/bin/jupyterhub-singleuser'\] \
+    --ip '' --port 8788 --ssl-key /etc/jupyterhub/secrets/jupyterhub.key \
+    --ssl-cert /etc/jupyterhub/secrets/jupyterhub.crt"

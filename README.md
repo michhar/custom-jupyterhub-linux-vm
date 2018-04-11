@@ -1,12 +1,8 @@
 # A Custom Linux VM with JupyterHub Built with Docker
 
-A custom Virtual Machine for Data Science - deployment to Azure, setup with template.
+A custom Virtual Machine for Data Science running Jupyterhub for multi-tenant Jupyter notebooks.
 
-* **For Cloud or Local Deployment**
-
-<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmichhar%2Fcustom-azure-dsvm-jupyterhub%2Fmaster%2Fazuredeploy.json" target="_blank">
-    <img src="http://azuredeploy.net/deploybutton.png"/>
-</a>
+* **For [Cloud](#cloud-deployment) or [Local Deployment](#run-locally)**
 
 ## Components
 
@@ -33,7 +29,7 @@ Other:
 Users:
 
 * 5 users:  wonderwoman, user1, user2, user3, user4
-* Password is the one used to build the image.  The default is "cheese".
+* Password is the one used to build the image.  The default is "Python3!".
 
 See the ARM template (`azuredeploy.json` and `azuredeploy.paramters.json`) for the specs on deploying to Azure.
 
@@ -60,16 +56,24 @@ Create the docker image:
 
  Push the image to Dockerhub so that you and others (namely the VM through the ARM template) can use it.
 
-## Run the image as a Jupyterhub system
+## Run Locally
 
-Run the docker image locally (on a Unix-based system):
+Run the docker image locally:
 
 * Ensure you have Docker installed (Docker for Windows or Docker for Mac are recommended)
 * Run the following docker `run` command at a command prompt as follows (may need `sudo` to enhance priviledges on Unix systems) (for a command prompt in Windows, search for "cmd"):
  
      `docker run -it -v /var/run/docker.sock:/var/run/docker.sock -p 8788:8788 --expose=8788 rheartpython/cvopenhack:latest`
      
- * Log into jupyterhub at https://0.0.0.0:8788 or https://localhost:8788 with the user `wonderwoman` and the system variable password you used when building it and you should also get an Admin panel to add more users to the jupyterhub or make them Admin as well so they can install stuff.
+ * Log into jupyterhub at https://0.0.0.0:8788 or https://localhost:8788 with the user `wonderwoman` and the system variable password you used when building it and you should also get an Admin panel to make users Admin as well so they can pip install stuff.
+
+## Cloud Deployment
+
+You will need an Azure Subscription for the following cloud deployment.  This utilizes the ARM template in this repo.
+
+<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmichhar%2Fcustom-azure-dsvm-jupyterhub%2Fmaster%2Fazuredeploy.json" target="_blank">
+    <img src="http://azuredeploy.net/deploybutton.png"/>
+</a>
 
  ## Credits
 
