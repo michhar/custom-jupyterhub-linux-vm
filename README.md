@@ -29,7 +29,7 @@ Other:
 Users:
 
 * 5 users:  wonderwoman, user1, user2, user3, user4
-* Password is the one used to build the image.  The default is "Python3!".
+* Password is the one used to build the image.  The default is **"cheese"**.
 
 See the ARM template (`azuredeploy.json` and `azuredeploy.paramters.json`) for the specs on deploying to Azure.
 
@@ -50,7 +50,7 @@ Create the docker image:
 
     `export USER_PASSWD=foobar`
     
-* Run docker build command as follows (name the image anything you like, here it's `rheartpython/cvopenhack` where `rheartpython` is the user name of mine on Dockerhub).  Note, on Windows it is recommended to run this command in Git Bash ([Download Git for Windodws here](https://git-scm.com/downloads)):
+* Run docker build command as follows (name the image anything you like, here it's `rheartpython/cvopenhack` where `rheartpython` is the user name of mine on Dockerhub).  Note, on Windows you should run this command in Git Bash ([Download Git for Windodws here](https://git-scm.com/downloads)):
 
     `docker build --build-arg USER_PW=$USER_PASSWD -t rheartpython/cvopenhack -f ForUnix_py36.dockerfile .`
 
@@ -65,7 +65,7 @@ Run the docker image locally:
  
      `docker run -it -v /var/run/docker.sock:/var/run/docker.sock -p 8788:8788 --expose=8788 rheartpython/cvopenhack:latest`
      
- * Log into jupyterhub at https://0.0.0.0:8788 or https://localhost:8788 with the user `wonderwoman` and the system variable password you used when building it and you should also get an Admin panel to make users Admin as well so they can pip install stuff.
+ * Log into jupyterhub at https://0.0.0.0:8788 or https://localhost:8788 (note the use of `https`) with the user `wonderwoman` and the system variable password you used when building it (the default specified above) and you should also get an Admin panel to make users Admin as well so they can pip install stuff.
 
 ## Cloud Deployment
 
@@ -74,6 +74,8 @@ You will need an Azure Subscription for the following cloud deployment.  This ut
 <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmichhar%2Fcustom-azure-dsvm-jupyterhub%2Fmaster%2Fazuredeploy.json" target="_blank">
     <img src="http://azuredeploy.net/deploybutton.png"/>
 </a>
+
+* Log into jupyterhub at https://<ip or dns name>:8788 (note the use of `https`) with the user `wonderwoman` and the system variable password you used when building it (the default specified above) and you should also get an Admin panel to make users Admin as well so they can pip install stuff.
 
  ## Credits
 

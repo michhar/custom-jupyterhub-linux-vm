@@ -1,41 +1,30 @@
-# Build with: docker build --build-arg USER_PW=$USER_PASSWD -t rheartpython/cvopenhack:unix -f Dockerfile.py36 .
-# Run with:  sudo docker run -it -v /var/run/docker.sock:/var/run/docker.sock -p 8788:8788 --expose=8788 rheartpython/cvopenhack:unix
-FROM microsoft/cntk:2.4-cpu-python3.5
-USER root
+FROM nvidia/cuda:9.0-cudnn7-devel-ubuntu16.04
 
-LABEL maintainer "Micheleen Harris (contact michhar <at> microsoft.com)"
-ENV PYTORCH_VERSION="0.3.0.post4-cp36-cp36m-linux_x86_64"
+LABEL maintainer "ML OpenHack Team (contact michhar <at> microsoft.com)"
+ENV PYTORCH_VERSION="0.3.1.post2"
 ENV TENSORFLOW_VERSION="1.6.0"
 ENV CNTK_VERSION="2.4-cp36-cp36m-linux_x86_64"
 ENV KERAS_VERSION="2.1.4"
+ENV TORCHVISION_VERION="0.2.0"
 
-# Docker install etc. (first repo add is for libpython3.6-dev)
 RUN apt-get update && apt-get install -y \
     apt-transport-https \
-    ca-certificates \
-    curl \
     software-properties-common \
     nodejs \
-    npm
+    npm \
+    zip \
+    sudo
 
-RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
-
-RUN add-apt-repository \
-   "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
-   $(lsb_release -cs) \
-   stable"
-
-RUN apt-get update && apt-get install -y docker-ce && apt-get install -y --no-install-recommends \
-        cmake \
-        git \
-        zip \
-        unzip \
-        libopencv-dev \
-        nvidia-cuda-toolkit \
-        && \
-    apt-get -y autoremove \
-        && \
-    rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y --no-install-recommends \
+         build-essential \
+         cmake \
+         git \
+         curl \
+         vim \
+         ca-certificates \
+         libjpeg-dev \
+         libpng-dev &&\
+     rm -rf /var/lib/apt/lists/*
 
 # Add admin user (other users can be made admins of jupyterhub from this user)
 ARG USER_PW
@@ -105,7 +94,6 @@ RUN useradd -m -s /bin/bash -N $NB_USER && \
     chmod -R 777 $CONDA_DIR
 RUN printf "${USER_PW}\n${USER_PW}" | passwd $NB_USER
 
-
 ENV NB_USER=wonderwoman
 USER $NB_USER
 
@@ -113,11 +101,11 @@ USER $NB_USER
 RUN mkdir /home/$NB_USER/work && \
     chmod -R 777 /home/$NB_USER
 
-# Install Python (conda) as jovyan and check the md5 sum provided on the download site
+# Install Python (conda) as wonderwoman and check the md5 sum provided on the download site
 RUN cd /tmp && \
-    wget --quiet https://repo.continuum.io/archive/Anaconda3-5.1.0-Linux-x86_64.sh && \
-    /bin/bash Anaconda3-5.1.0-Linux-x86_64.sh -f -b -p $CONDA_DIR && \
-    rm Anaconda3-5.1.0-Linux-x86_64.sh && \
+    curl -O https://repo.continuum.io/miniconda/Miniconda3-4.4.10-Linux-x86_64.sh && \
+    /bin/bash Miniconda3-4.4.10-Linux-x86_64.sh -f -b -p $CONDA_DIR && \
+    rm Miniconda3-4.4.10-Linux-x86_64.sh && \
     $CONDA_DIR/bin/conda config --system --prepend channels conda-forge && \
     $CONDA_DIR/bin/conda config --system --set auto_update_conda false && \
     $CONDA_DIR/bin/conda config --system --set show_channel_urls true && \
@@ -136,49 +124,40 @@ USER $NB_USER
 # Create the conda environment
 RUN $CONDA_DIR/bin/conda create -n py36
 
-# General Installs
-RUN bash -c 'source /user/anaconda3/bin/activate py36 && conda install -y -n py36 cython boost'
-RUN bash -c 'source /user/anaconda3/bin/activate py36 && pip install dlib easydict pyyaml'
+# ENV PATH /opt/conda/bin:$PATH
+# This must be done before pip so that requirements.txt is available
+WORKDIR /opt/pytorch
+COPY . .
+
 
 # Tensorflow and Keras
 RUN bash -c 'source /user/anaconda3/bin/activate py36 && pip install tensorflow==${TENSORFLOW_VERSION}'
 RUN bash -c 'source /user/anaconda3/bin/activate py36 && pip install keras==${KERAS_VERSION}'
 
 # CNTK and Custom Vision Service Python libraries
-RUN bash -c 'source /user/anaconda3/bin/activate py36 && pip install https://cntk.ai/PythonWheel/CPU-Only/cntk-${CNTK_VERSION}.whl'
+RUN bash -c 'source /user/anaconda3/bin/activate py36 && pip install https://cntk.ai/PythonWheel/GPU/cntk-${CNTK_VERSION}.whl'
+RUN bash -c 'source /user/anaconda3/bin/activate py36 && pip install azure-cognitiveservices-vision-customvision'
+
+# Other (version-specific)
+RUN bash -c 'source /user/anaconda3/bin/activate py36 && pip install -r requirements.txt'
+RUN bash -c 'source /user/anaconda3/bin/activate py36 && pip install -r cli-requirements.txt'
 
 USER root
 
-RUN bash -c 'source /user/anaconda3/bin/activate py36 && pip install azure-cognitiveservices-vision-customvision'
-
-COPY . /hub/user/
-
-RUN mkdir /data
-# To get data
-RUN curl -O https://challenge.blob.core.windows.net/challengefiles/gear_images.zip
-RUN curl -O https://challenge.blob.core.windows.net/challengefiles/gear_images_testset.zip
-RUN cp *.zip /data
-
-WORKDIR /hub/user/
-
-RUN bash -c 'source /user/anaconda3/bin/activate py36 && pip install -r cli-requirements.txt'
-RUN bash -c 'source /user/anaconda3/bin/activate py36 && pip install -r requirements.txt'
-
 # PyTorch
-RUN bash -c 'source /user/anaconda3/bin/activate py36 && pip install http://download.pytorch.org/whl/cu80/torch-${PYTORCH_VERSION}.whl'
-RUN bash -c 'source /user/anaconda3/bin/activate py36 && pip install torchvision==0.2.0'
-# Install Torchnet, a high-level framework for PyTorch
-RUN bash -c 'source /user/anaconda3/bin/activate py36 && pip install git+https://github.com/pytorch/tnt.git@master'
-RUN bash -c 'source /user/anaconda3/bin/activate py36 && pip install torchvision psutil'
+RUN CMAKE_PREFIX_PATH="/user/anaconda3/envs/py36/" && \
+    bash -c 'source /user/anaconda3/bin/activate py36 && conda install numpy pyyaml mkl mkl-include setuptools cmake cffi typing' && \
+    bash -c 'source /user/anaconda3/bin/activate py36 && conda install -c pytorch==${PYTORCH_VERSION} magma-cuda80 torchvision==${TORCHVISION_VERION}'
+
+# RUN bash -c 'source /user/anaconda3/bin/activate py36 && git clone https://github.com/pytorch/vision.git && cd vision && pip install -v .'
 
 ### Conda folder permissions ###
-
 RUN chmod -R 777 $CONDA_DIR
 
 ### Jupyterhub setup ###
 
 # Additional installs
-RUN sudo apt-get install nodejs npm
+RUN apt-get install nodejs npm
 RUN ln -s /usr/bin/nodejs /usr/bin/node
 RUN npm install -g configurable-http-proxy
 
@@ -189,15 +168,17 @@ RUN chmod +x /etc/init.d/jupyterhub
 RUN mkdir -p /etc/jupyterhub
 RUN chmod +x /etc/jupyterhub
 
+# ENV NB_USER=wonderwoman
+# USER $NB_USER
+
 # Deal with directory permissions for user and add to userlist
-RUN bash -c 'source /user/anaconda3/bin/activate py36 && mkdir -p /hub/user/wonderwoman/'
-RUN bash -c 'source /user/anaconda3/bin/activate py36 && sudo chown wonderwoman /hub/user/wonderwoman/'
-RUN bash -c 'source /user/anaconda3/bin/activate py36 && mkdir -p /user/wonderwoman/'
-RUN bash -c 'source /user/anaconda3/bin/activate py36 && sudo chown wonderwoman /user/wonderwoman/'
-# fyi, this was for docker-compose
-RUN bash -c 'source /user/anaconda3/bin/activate py36 && echo "wonderwoman admin" >> /etc/jupyterhub/userlist' 
-RUN bash -c 'source /user/anaconda3/bin/activate py36 && sudo chown wonderwoman /etc/jupyterhub'
-RUN bash -c 'source /user/anaconda3/bin/activate py36 && sudo chown wonderwoman /etc/jupyterhub'
+RUN mkdir -p /hub/user/wonderwoman/
+RUN chown wonderwoman /hub/user/wonderwoman/
+RUN mkdir -p /user/wonderwoman/
+RUN chown wonderwoman /user/wonderwoman/
+RUN echo "wonderwoman admin" >> /etc/jupyterhub/userlist
+RUN chown wonderwoman /etc/jupyterhub
+RUN chown wonderwoman /etc/jupyterhub
 
 # Create a default config to /etc/jupyterhub/jupyterhub_config.py
 RUN bash -c 'source /user/anaconda3/bin/activate py36 && jupyterhub --generate-config -f /etc/jupyterhub/jupyterhub_config.py'
@@ -207,17 +188,14 @@ RUN bash -c "source /user/anaconda3/bin/activate py36 && echo c.LocalAuthenticat
 RUN bash -c "source /user/anaconda3/bin/activate py36 && echo c.Authenticator.admin_users={\'wonderwoman\'} >> /etc/jupyterhub/jupyterhub_config.py"
 
 # Copy TLS certificate and key
+ENV SSL_CERT /etc/jupyterhub/secrets/mycert.pem
+ENV SSL_KEY /etc/jupyterhub/secrets/mykey.key
+COPY ./secrets/*.crt $SSL_CERT
+COPY ./secrets/*.key $SSL_KEY
 RUN chmod 700 /etc/jupyterhub/secrets && \
     chmod 600 /etc/jupyterhub/secrets/*
 
 # For CNTK (libpython3.6-dev needed)
 RUN add-apt-repository ppa:jonathonf/python-3.6 && apt-get update && apt-get install -y libpython3.6-dev
 
-CMD bash -c "source /user/anaconda3/bin/activate py36 \
-    && jupyterhub -f /etc/jupyterhub/jupyterhub_config.py \
-    --JupyterHub.Authenticator.whitelist=\{\'user1\',\'user2\',\'user3\',\'user4\'\} \
-    --JupyterHub.hub_ip='' --JupyterHub.ip='' \
-    JupyterHub.cookie_secret=bytes.fromhex\('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'\) \
-    Spawner.cmd=\['/user/anaconda3/bin/jupyterhub-singleuser'\] \
-    --ip '' --port 8788 --ssl-key /etc/jupyterhub/secrets/jupyterhub.key \
-    --ssl-cert /etc/jupyterhub/secrets/jupyterhub.crt"
+CMD bash -c "source /user/anaconda3/bin/activate py36 && jupyterhub -f /etc/jupyterhub/jupyterhub_config.py --JupyterHub.Authenticator.whitelist=\{\'user1\',\'user2\',\'user3\',\'user4\'\} --JupyterHub.hub_ip='' --JupyterHub.ip='' JupyterHub.cookie_secret=bytes.fromhex\('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'\) Spawner.cmd=\['/user/anaconda3/bin/jupyterhub-singleuser'\] --ip '' --port 8788 --ssl-key /etc/jupyterhub/secrets/mykey.key --ssl-cert /etc/jupyterhub/secrets/mycert.pem"
