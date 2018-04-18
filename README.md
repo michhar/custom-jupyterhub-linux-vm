@@ -29,7 +29,7 @@ Other:
 Users:
 
 * 5 users:  wonderwoman, user1, user2, user3, user4
-* Password is the one used to build the image.  The default is **"cheese"**.
+* Password is the one used to build the image.  The default is **"Python3!"**.
 
 See the ARM template (`azuredeploy.json` and `azuredeploy.paramters.json`) for the specs on deploying to Azure.
 
@@ -50,11 +50,11 @@ Create the docker image:
 
     `export USER_PASSWD=foobar`
     
-* Run docker build command as follows (name the image anything you like, here it's `rheartpython/cvopenhack` where `rheartpython` is the user name of mine on Dockerhub).  Note, on Windows you should run this command in Git Bash ([Download Git for Windodws here](https://git-scm.com/downloads)):
+* Create the image by running the docker build command as follows (name the image anything you like, e.g. `rheartpython/cvopenhack`, where `rheartpython` is the user name of mine on Dockerhub).  Note, on Windows you should run this command in Git Bash ([Download Git for Windodws here](https://git-scm.com/downloads)):
 
-    `docker build --build-arg USER_PW=$USER_PASSWD -t rheartpython/cvopenhack -f ForUnix_py36.dockerfile .`
+    `docker build --build-arg USER_PW=$USER_PASSWD -t <dockerhub user>/<image name> -f Linux_py36.dockerfile .`
 
- Push the image to Dockerhub so that you and others (namely the VM through the ARM template) can use it.
+ Push the image to Dockerhub so that you and others (namely the VM through the ARM template) can use it  (`login docker` and then `push <dockerhub user>/<image name>`).
 
 ## Run Locally
 
