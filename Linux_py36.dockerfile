@@ -28,7 +28,9 @@ RUN apt-get update && apt-get install -y \
     nodejs \
     npm \
     zip \
-    sudo
+    sudo \
+    libsm6 \
+    libxext6
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
          build-essential \
@@ -223,7 +225,7 @@ USER $NB_USER
 # WORKDIR /user
 
 # Create the conda environment
-RUN $CONDA_DIR/bin/conda create -n py36
+RUN $CONDA_DIR/bin/conda create -n py36 python=3.6
 
 # Tensorflow and Keras
 RUN bash -c 'source /user/miniconda3/bin/activate py36 && pip install tensorflow==${TENSORFLOW_VERSION}'
@@ -238,10 +240,9 @@ RUN bash -c 'source /user/miniconda3/bin/activate py36 && pip install azure-cogn
 # Other (version-specific) from reequirements files
 COPY . .
 RUN bash -c 'source /user/miniconda3/bin/activate py36 && pip install -r requirements.txt'
-RUN bash -c 'source /user/miniconda3/bin/activate py36 && pip install -r cli-requirements.txt'
 
-# # First try at pytorch install
-# RUN bash -c 'source /user/miniconda3/bin/activate py36 && conda install pytorch==${PYTORCH_VERSION} torchvision==${TORCHVISION_VERION} -c pytorch'
+# Azure CLIs
+RUN bash -c 'source /user/miniconda3/bin/activate py36 && pip install -r cli-requirements.txt'
 
 # PyTorch
 WORKDIR /opt/pytorch
@@ -249,24 +250,43 @@ COPY . .
 
 RUN CMAKE_PREFIX_PATH="/user/miniconda3/envs/py36/" && \
     bash -c 'source /user/miniconda3/bin/activate py36 && conda install numpy pyyaml mkl mkl-include setuptools cmake cffi typing' && \
-    bash -c 'source /user/miniconda3/bin/activate py36 && conda install pytorch==${PYTORCH_VERSION} torchvision -c pytorch'
+    bash -c 'source /user/miniconda3/bin/activate py36 && conda install --yes pytorch==${PYTORCH_VERSION} torchvision -c pytorch'
 
-# Tensorflow Probability (https://github.com/tensorflow/probability)
-RUN bash -c 'source /user/miniconda3/bin/activate py36 && pip install --upgrade tensorflow-probability'
+# Other useful computer vision related libraries - will move to requirements file
+RUN bash -c 'source /user/miniconda3/bin/activate py36 && pip install Shapely==1.6'
+RUN bash -c 'source /user/miniconda3/bin/activate py36 && pip install SimpleCV==1.3'
+RUN bash -c 'source /user/miniconda3/bin/activate py36 && pip install dask==0.17.2'
+RUN bash -c 'source /user/miniconda3/bin/activate py36 && pip install mahotas==1.4.4'
+RUN bash -c 'source /user/miniconda3/bin/activate py36 && pip install milk==0.6.1'
 
-# TF Object Detection API - wip
-RUN bash -c 'source /user/miniconda3/bin/activate py36 && pip install Cython'
+# # TF Object Detection API - wip
+# RUN bash -c 'source /user/miniconda3/bin/activate py36 && pip install Cython'
 
 # Create the conda environment
 RUN $CONDA_DIR/bin/conda create -n py35 python=3.5.2 ipykernel
 
-USER root
+# Create the conda environment
+RUN $CONDA_DIR/bin/conda create -n py35_tfp python=3.5.2 ipykernel
 
+# Tensorflow Probability (https://github.com/tensorflow/probability) - experimental (in its own conda env)
+# - depends on a nightly build of TensorFlow
+RUN bash -c 'source /user/miniconda3/bin/activate py35_tfp && pip install --upgrade tf-nightly'
+RUN bash -c 'source /user/miniconda3/bin/activate py35_tfp && pip install --upgrade tfp-nightly'
+
+USER root
 # Add the py35 kernel to Jupyter
 RUN bash -c 'source /user/miniconda3/bin/activate py35 && python -m ipykernel install --name py35 --display-name "Python 3.5.2"'
 
+# Add the py35_tfp (TensorFlow Probability) kernel to Jupyter
+RUN bash -c 'source /user/miniconda3/bin/activate py35_tfp && python -m ipykernel install --name py35_tfp --display-name "Python 3.5.2 TFP"'
 
-# Torchvision - this is the development release install path
+USER $NB_USER
+RUN bash -c 'source /user/miniconda3/bin/activate py35 && pip install -r requirements.txt'
+RUN bash -c 'source /user/miniconda3/bin/activate py35_tfp && pip install -r requirements.txt'
+
+USER root
+
+# # Torchvision - this is the development release install path; installing as root due to git
 # RUN bash -c 'source /user/miniconda3/bin/activate py36 && git clone https://github.com/pytorch/vision.git && cd vision && pip install -v .'
 
 ### Conda folder permissions ###
