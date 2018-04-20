@@ -235,7 +235,6 @@ RUN bash -c 'source /user/miniconda3/bin/activate py36 && pip install keras==${K
 
 # RUN bash -c 'source /user/miniconda3/bin/activate py36 && pip install https://cntk.ai/PythonWheel/CPU-Only/cntk-${CNTK_VERSION}.whl'
 RUN bash -c 'source /user/miniconda3/bin/activate py36 && pip install cntk==${CNTK_VERSION}'
-RUN bash -c 'source /user/miniconda3/bin/activate py36 && pip install azure-cognitiveservices-vision-customvision==0.1.0'
 
 # Other (version-specific) from reequirements files
 COPY . .
@@ -252,28 +251,34 @@ RUN CMAKE_PREFIX_PATH="/user/miniconda3/envs/py36/" && \
     bash -c 'source /user/miniconda3/bin/activate py36 && conda install numpy pyyaml mkl mkl-include setuptools cmake cffi typing' && \
     bash -c 'source /user/miniconda3/bin/activate py36 && conda install --yes pytorch==${PYTORCH_VERSION} torchvision -c pytorch'
 
-# Other useful computer vision related libraries - will move to requirements file
-RUN bash -c 'source /user/miniconda3/bin/activate py36 && pip install Shapely==1.6'
-RUN bash -c 'source /user/miniconda3/bin/activate py36 && pip install SimpleCV==1.3'
-RUN bash -c 'source /user/miniconda3/bin/activate py36 && pip install dask==0.17.2'
-RUN bash -c 'source /user/miniconda3/bin/activate py36 && pip install mahotas==1.4.4'
-RUN bash -c 'source /user/miniconda3/bin/activate py36 && pip install milk==0.6.1'
+# Other useful computer vision related libraries - moved to requirements file
 
 # # TF Object Detection API - wip
 # RUN bash -c 'source /user/miniconda3/bin/activate py36 && pip install Cython'
 
-# Create the conda environment
-RUN $CONDA_DIR/bin/conda create -n py35 python=3.5.2 ipykernel
+# Create the conda environment for generic use (Python 3.5)
+RUN $CONDA_DIR/bin/conda create -n py35 python=3.5.2 ipykernel pip
 
-# Create the conda environment
-RUN $CONDA_DIR/bin/conda create -n py35_tfp python=3.5.2 ipykernel
+# Create the conda environment for TensorFlow Probability and stats use (Python 3.5 as well)
+RUN $CONDA_DIR/bin/conda create -n py35_tfp python=3.5.2 ipykernel pip
 
+# Installing a Probability lib into Conda env py35_tfp:
 # Tensorflow Probability (https://github.com/tensorflow/probability) - experimental (in its own conda env)
 # - depends on a nightly build of TensorFlow
 RUN bash -c 'source /user/miniconda3/bin/activate py35_tfp && pip install --upgrade tf-nightly'
 RUN bash -c 'source /user/miniconda3/bin/activate py35_tfp && pip install --upgrade tfp-nightly'
 
 USER root
+
+# CoreML converter and validation tools for models
+RUN bash -c 'source /user/miniconda3/bin/activate py35 && git clone https://github.com/apple/coremltools.git && cd coremltools && pip install -v .'
+
+# CoreML converter and validation tools for models
+RUN bash -c 'source /user/miniconda3/bin/activate py36 && git clone https://github.com/apple/coremltools.git && cd coremltools && pip install -v .'
+
+# CoreML converter and validation tools for models
+RUN bash -c 'source /user/miniconda3/bin/activate py35_tfp && git clone https://github.com/apple/coremltools.git && cd coremltools && pip install -v .'
+
 # Add the py35 kernel to Jupyter
 RUN bash -c 'source /user/miniconda3/bin/activate py35 && python -m ipykernel install --name py35 --display-name "Python 3.5.2"'
 
@@ -281,8 +286,13 @@ RUN bash -c 'source /user/miniconda3/bin/activate py35 && python -m ipykernel in
 RUN bash -c 'source /user/miniconda3/bin/activate py35_tfp && python -m ipykernel install --name py35_tfp --display-name "Python 3.5.2 TFP"'
 
 USER $NB_USER
+
+# Install those requirements that py36 got into two other environments
 RUN bash -c 'source /user/miniconda3/bin/activate py35 && pip install -r requirements.txt'
 RUN bash -c 'source /user/miniconda3/bin/activate py35_tfp && pip install -r requirements.txt'
+
+# CoreML converter and validation tools for models - put on Python 3.5
+RUN bash -c 'source /user/miniconda3/bin/activate py35 && git clone https://github.com/apple/coremltools.git && cd coremltools && pip install -v .'
 
 USER root
 
@@ -290,6 +300,7 @@ USER root
 # RUN bash -c 'source /user/miniconda3/bin/activate py36 && git clone https://github.com/pytorch/vision.git && cd vision && pip install -v .'
 
 ### Conda folder permissions ###
+# - must do as root, but gives permission so can pip install etc. 
 RUN chmod -R 777 $CONDA_DIR
 
 ### Jupyterhub setup ###
