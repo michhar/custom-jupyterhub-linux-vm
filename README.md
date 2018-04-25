@@ -6,10 +6,9 @@ A custom Virtual Machine for Data Science running Jupyterhub for multi-tenant Ju
 
 ## Components
 
-Python:
+### Python 3.6 - For Deep Learning
 
-* Python 3.6 (Anaconda release)
-* JupyterHub 1.7.2
+Python 3.5 (Miniconda release)
 
 Deep Learning:
 
@@ -20,22 +19,52 @@ Deep Learning:
 * CNTK 2.4
 * Keras 2.1.4
 
-Other:
+Azure:
 
-* Custom Vision Python SDK (azure-cognitiveservices-vision-customvision) 0.1.0
 * Azure CLI 2.0.22
 * Azure ML CLI 0.1.0a27.post3
 
-Users:
+### Python 3.5 - For Python 3.5 if Needed
 
-* 5 users:  wonderwoman, user1, user2, user3, user4
+Python 3.5.2 (Miniconda release)
+
+
+
+### Python 3.5 TFP - For Experimenting with Probability in TensorFlow
+
+Python 3.5.2 TFP kernel only
+
+* TensorFlow Probability and TesnorFlow nightly build
+
+### All Python Versions on this VM Have
+
+Computer Vision Related
+
+* OpenCV - opencv-python==3.4.0.12
+* Scikit-Image - scikit-image==0.13.1
+* Imaged Augmentation Library - imgaug==0.2.5
+* Custom Vision Python SDK - azure-cognitiveservices-vision-customvision==0.1.0
+* Azure Image Search SDK - azure-cognitiveservices-search-imagesearch==0.1.0
+* Shapely for spatial analysis [Ref](http://shapely.readthedocs.io/en/stable/manual.html) - Shapely==1.6
+* SimpleCV [Ref](http://simplecv.readthedocs.io/en/1.0/); can even hook up to webcam etc. - [Ref](http://simplecv.readthedocs.io/en/1.0/cookbook/#using-a-camera-kinect-or-virtualcamera)) - SimpleCV==1.3
+* Mahotas (can image classify along with milk and good feature extraction: [Ref](http://mahotas.readthedocs.io/en/latest/classification.html)) - mahotas==1.4.4
+* Milk (good for the feature selection mainly [Ref](https://pythonhosted.org/milk/index.html)) - milk==0.6.1
+* Dask for external memory bound computation (I did digit classification [here](https://github.com/michhar/python-jupyter-notebooks/blob/master/dask/dask-digit-classification.ipynb) - dask==0.17.2
+
+Other
+
+* JupyterHub 1.7.2
+
+### Users Set Up on VM
+
+* **5 users**:  wonderwoman, user1, user2, user3, user4
 * Password is the one used to build the image.  The default is **"Python3!"**.
 
 See the ARM template (`azuredeploy.json` and `azuredeploy.paramters.json`) for the specs on deploying to Azure.
 
-Data:
+### Data
 
-* Small image dataset under `/data`
+* None yet
 
 ## To build the Docker image
 
@@ -63,7 +92,7 @@ Run the docker image locally:
 * Ensure you have Docker installed (Docker for Windows or Docker for Mac are recommended)
 * Run the following docker `run` command at a command prompt as follows (may need `sudo` to enhance priviledges on Unix systems) (for a command prompt in Windows, search for "cmd"):
  
-     `docker run -it -v /var/run/docker.sock:/var/run/docker.sock -p 8788:8788 --expose=8788 rheartpython/cvopenhack:latest`
+     `docker run -it -v /var/run/docker.sock:/var/run/docker.sock -p 8788:8788 --expose=8788 rheartpython/cvdeep:tfp`
      
  * Log into jupyterhub at https://0.0.0.0:8788 or https://localhost:8788 (note the use of `https`) with the user `wonderwoman` and the system variable password you used when building it (the default specified above) and you should also get an Admin panel to make users Admin as well so they can pip install stuff.
 

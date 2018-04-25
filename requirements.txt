@@ -126,13 +126,10 @@ selectivesearch==0.4
 scikit-image==0.13.1
 easydict==1.7
 opencv-python==3.4.0.12
-
 Shapely==1.6
 SimpleCV==1.3
-dask==0.17.2
-mahotas==1.4.4
-milk==0.6.1
-
+# mahotas==1.4.4
+# milk==0.6.1
 azure-cognitiveservices-search-imagesearch==0.1.0
 azure-cognitiveservices-vision-customvision==0.1.0
 imgaug==0.2.5
