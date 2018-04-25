@@ -6,17 +6,14 @@ A custom Virtual Machine for Data Science running Jupyterhub for multi-tenant Ju
 
 ## Components
 
-### Python 3.6 - For Deep Learning
-
-Python 3.5 (Miniconda release)
+**Python 3.5 (Miniconda release)**
 
 Deep Learning:
 
 * TensorFlow 1.6.0
-* PyTorch 0.3.0.post4-cp36
-* PyTorchNet 0.0.1
+* PyTorch 0.3.1
 * Torchvision 0.2.0
-* CNTK 2.4
+* CNTK 2.5
 * Keras 2.1.4
 
 Azure:
@@ -24,15 +21,9 @@ Azure:
 * Azure CLI 2.0.22
 * Azure ML CLI 0.1.0a27.post3
 
-### Python 3.5 - For Python 3.5 if Needed
-
-Python 3.5.2 (Miniconda release)
-
-
-
 ### Python 3.5 TFP - For Experimenting with Probability in TensorFlow
 
-Python 3.5.2 TFP kernel only
+"Python 3.5.2 TFP" (kernel name)
 
 * TensorFlow Probability and TesnorFlow nightly build
 
@@ -92,7 +83,7 @@ Run the docker image locally:
 * Ensure you have Docker installed (Docker for Windows or Docker for Mac are recommended)
 * Run the following docker `run` command at a command prompt as follows (may need `sudo` to enhance priviledges on Unix systems) (for a command prompt in Windows, search for "cmd"):
  
-     `docker run -it -v /var/run/docker.sock:/var/run/docker.sock -p 8788:8788 --expose=8788 rheartpython/cvdeep:tfp`
+     `docker run -it -v /var/run/docker.sock:/var/run/docker.sock -p 8788:8788 --expose=8788 rheartpython/cvdeep:latest`
      
  * Log into jupyterhub at https://0.0.0.0:8788 or https://localhost:8788 (note the use of `https`) with the user `wonderwoman` and the system variable password you used when building it (the default specified above) and you should also get an Admin panel to make users Admin as well so they can pip install stuff.
 
