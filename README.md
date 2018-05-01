@@ -38,8 +38,6 @@ Computer Vision Related
 * Azure Image Search SDK - azure-cognitiveservices-search-imagesearch==0.1.0
 * Shapely for spatial analysis [Ref](http://shapely.readthedocs.io/en/stable/manual.html) - Shapely==1.6
 * SimpleCV [Ref](http://simplecv.readthedocs.io/en/1.0/); can even hook up to webcam etc. - [Ref](http://simplecv.readthedocs.io/en/1.0/cookbook/#using-a-camera-kinect-or-virtualcamera)) - SimpleCV==1.3
-* Mahotas (can image classify along with milk and good feature extraction: [Ref](http://mahotas.readthedocs.io/en/latest/classification.html)) - mahotas==1.4.4
-* Milk (good for the feature selection mainly [Ref](https://pythonhosted.org/milk/index.html)) - milk==0.6.1
 * Dask for external memory bound computation (I did digit classification [here](https://github.com/michhar/python-jupyter-notebooks/blob/master/dask/dask-digit-classification.ipynb) - dask==0.17.2
 
 Other
@@ -72,7 +70,7 @@ Create the docker image:
     
 * Create the image by running the docker build command as follows (name the image anything you like, e.g. `rheartpython/cvopenhack`, where `rheartpython` is the user name of mine on Dockerhub).  Note, on Windows you should run this command in Git Bash ([Download Git for Windodws here](https://git-scm.com/downloads)):
 
-    `docker build --build-arg USER_PW=$USER_PASSWD -t <dockerhub user>/<image name> -f Linux_py36.dockerfile .`
+    `docker build --build-arg USER_PW=$USER_PASSWD -t <dockerhub user>/<image name> -f Linux_py35.dockerfile .`
 
  Push the image to Dockerhub so that you and others (namely the VM through the ARM template) can use it  (`login docker` and then `push <dockerhub user>/<image name>`).
 
@@ -83,7 +81,7 @@ Run the docker image locally:
 * Ensure you have Docker installed (Docker for Windows or Docker for Mac are recommended)
 * Run the following docker `run` command at a command prompt as follows (may need `sudo` to enhance priviledges on Unix systems) (for a command prompt in Windows, search for "cmd"):
  
-     `docker run -it -v /var/run/docker.sock:/var/run/docker.sock -p 8788:8788 --expose=8788 rheartpython/cvdeep:latest`
+     `docker run -it -v /var/run/docker.sock:/var/run/docker.sock -p 8788:8788  --ipc-host --expose=8788 rheartpython/cvdeep:latest`
      
  * Log into jupyterhub at https://0.0.0.0:8788 or https://localhost:8788 (note the use of `https`) with the user `wonderwoman` and the system variable password you used when building it (the default specified above) and you should also get an Admin panel to make users Admin as well so they can pip install stuff.
 
