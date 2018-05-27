@@ -29,6 +29,12 @@
           "metadata": {
               "description": "Size for the Virtual Machine."
           }
+      },
+      "vmName": {
+        "type": "string",
+        "metadata": {
+          "description": "Name for the Virtual Machine."
+        }
       }
     },
     "variables": {
@@ -38,7 +44,7 @@
       "imageOffer": "linux-data-science-vm-ubuntu",
       "vmSize": "[parameters('vmSize')]",
       "nicName": "networkInterface1",
-      "vmName": "customdeeplearningvm",
+      "vmName": "[parameters('vmName')]",
       "virtualNetworkName": "virtualNetwork1",
       "publicIPAddressName": "publicIp1",
       "addressPrefix": "10.0.0.0/16",
