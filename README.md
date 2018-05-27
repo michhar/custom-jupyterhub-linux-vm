@@ -2,7 +2,7 @@
 
 A custom Virtual Machine for Data Science running Jupyterhub for multi-tenant Jupyter notebooks.
 
-* **For [Cloud](#cloud-deployment) or [Local Deployment](#run-locally)**
+* **For [Cloud](#azure-cloud-deployment) or [Local Deployment](#run-locally)**
 
 ## Components
 
@@ -55,25 +55,6 @@ See the ARM template (`azuredeploy.json` and `azuredeploy.paramters.json`) for t
 
 * None yet
 
-## To build the Docker image
-
-Create the docker image:
-
-* In the `secrets` folder create some certificate and key files with `openssl` and name them `jupyterhub.crt` and `jupyterhub.key`, respectively.
-  * To create these:
-  
-      `openssl req -new -newkey rsa:2048 -nodes -keyout jupyterhub.key -x509 -days 365 -out jupyterhub.crt`
-
-* Create a system var called `$USER_PASSWD` with a password for an admin to jupyterhub user.  This will feed into a sys var in the dockerfile/image.  E.g.:
-
-    `export USER_PASSWD=foobar`
-    
-* Create the image by running the docker build command as follows (name the image anything you like, e.g. `rheartpython/cvopenhack`, where `rheartpython` is the user name of mine on Dockerhub).  Note, on Windows you should run this command in Git Bash ([Download Git for Windodws here](https://git-scm.com/downloads)):
-
-    `docker build --build-arg USER_PW=$USER_PASSWD -t <dockerhub user>/<image name> -f Linux_py35.dockerfile .`
-
- Push the image to Dockerhub so that you and others (namely the VM through the ARM template) can use it  (`login docker` and then `push <dockerhub user>/<image name>`).
-
 ## Run Locally
 
 Run the docker image locally (**CPU-only**):
@@ -97,13 +78,34 @@ You can click on the "Deploy to Azure" button to try out the VM (Azure subscript
     <img src="http://azuredeploy.net/deploybutton.png"/>
 </a>
 
-### GPU DSVM Version with `cvdeep_gpu` Image
+### GPU DSVM Version with `cvdeep_gpu` Image (_alpha_ release!)
 
 <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmichhar%2Fcustom-azure-dsvm-jupyterhub%2Fmaster%2Fazuredeploy_gpu.json" target="_blank">
     <img src="http://azuredeploy.net/deploybutton.png"/>
 </a>
 
-* Log into jupyterhub at https://<ip or dns name>:8788 (note the use of `https`) with the user `wonderwoman` and the system variable password you used when building it (the default specified above) and you should also get an Admin panel to make users Admin as well so they can pip install stuff.
+* Log into jupyterhub at `https://<ip or dns name>:8788` (note the use of `https` and port `8788`) with the user `wonderwoman` and the system variable password you used when building it (the default specified above) and you should also get an Admin panel to make the other users Admin as well so they can pip install stuff.
+
+## To Build the Docker Image Yourself
+
+Create the docker image:
+
+* In the `secrets` folder create some certificate and key files with `openssl` and name them `jupyterhub.crt` and `jupyterhub.key`, respectively.
+  * To create these:
+  
+      `openssl req -new -newkey rsa:2048 -nodes -keyout jupyterhub.key -x509 -days 365 -out jupyterhub.crt`
+
+* Create a system var called `$USER_PASSWD` with a password for an admin to jupyterhub user.  This will feed into a sys var in the dockerfile/image.  E.g.:
+
+    `export USER_PASSWD=foobar`
+    
+* Create the image by running the `docker build` command as follows (name the image tag anything you like, e.g. `rheartpython/cvdeep`, where `rheartpython` is a username on Dockerhub, so use yours or any tag).  Note, on Windows you should run this command in Git Bash ([Download Git for Windodws here](https://git-scm.com/downloads)):
+
+    `docker build --build-arg USER_PW=$USER_PASSWD -t <dockerhub user>/<image name> -f Linux_py35.dockerfile .`
+
+### If You Wish to Push to Dockerhub
+
+ Push the image to Dockerhub so that you and others (namely the VM through the ARM template) can use it  (`docker login` and then `push <dockerhub user>/<image name>`).
 
  ## Credits
 
