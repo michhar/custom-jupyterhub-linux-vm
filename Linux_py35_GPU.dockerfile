@@ -181,7 +181,11 @@ RUN wget https://github.com/google/protobuf/releases/download/v3.5.1/protobuf-al
     ./autogen.sh && \
     ./configure CFLAGS=-fPIC CXXFLAGS=-fPIC --disable-shared --prefix=/usr/local/protobuf-3.5.1 && \
     make -j $(nproc) && \
-    make install
+    make install &&\
+    cd /usr/local/protobuf-3.5.1/bin &&\
+    chmod +x protoc &&\
+    cd .. &&\
+    export PATH=$PATH:`pwd`:`pwd`/bin
 
 # # Boost (for CNTK) - skipping for now
 # RUN wget https://sourceforge.net/projects/boost/files/boost/1.67.0/boost_1_67_0.tar.gz/download && \
@@ -296,18 +300,24 @@ USER $NB_USER
 # Create the conda environment
 RUN $CONDA_DIR/bin/conda create -n py35 python=3.5.2 ipykernel
 
+USER root
+
 # TensorFlow-GPU, TensorFlow Object Detection API and Keras
+ENV PATH="/usr/local/protobuf-3.5.1/bin:${PATH}"
 RUN bash -c 'source /user/miniconda3/bin/activate py35 && pip install --upgrade Cython'
 RUN bash -c 'source /user/miniconda3/bin/activate py35 && pip install --upgrade tensorflow-gpu==1.5'
 RUN bash -c 'source /user/miniconda3/bin/activate py35 && pip install -e git+https://github.com/pdollar/coco.git#egg=pycocotools&subdirectory=PythonAPI'
-RUN apt-get update && apt-get install protobuf-compiler python-pil python-lxml python-tk
+ARG DEBIAN_FRONTEND=noninteractive
+RUN export DEBIAN_FRONTEND="noninteractive" &&\
+    apt-get update && apt-get install --yes protobuf-compiler python-pil python-lxml python-tk
 RUN bash -c 'source /user/miniconda3/bin/activate py35 && pip install --upgrade jupyter matplotlib'
 RUN mkdir -p /tensorflow
 WORKDIR /tensorflow/
 RUN git clone https://github.com/tensorflow/models.git
 COPY . .
 WORKDIR /tensorflow/models/research
-RUN protoc object_detection/protos/*.proto --python_out=.
+RUN cd /tensorflow/models/research &&\
+    protoc object_detection/protos/*.proto --python_out=.
 RUN export PYTHONPATH=$PYTHONPATH:`pwd`:`pwd`/slim
 RUN bash -c 'source /user/miniconda3/bin/activate py35 && pip install keras==${KERAS_VERSION}'
 
@@ -322,7 +332,7 @@ COPY . .
 
 RUN CMAKE_PREFIX_PATH="/user/miniconda3/envs/py35/" && \
     bash -c 'source /user/miniconda3/bin/activate py35 && conda install numpy pyyaml mkl mkl-include setuptools cmake cffi typing' && \
-    bash -c 'source /user/miniconda3/bin/activate py35 && conda install --yes pytorch==${PYTORCH_VERSION} torchvision==${TORCHVISION_VERSION} cuda90 -c pytorch'
+    bash -c 'source /user/miniconda3/bin/activate py35 && conda install --yes pytorch==${PYTORCH_VERSION} torchvision cuda90 -c pytorch'
 
 # Requirements into the Python 3.5
 RUN bash -c 'source /user/miniconda3/bin/activate py35 && pip install -r requirements.txt'
@@ -399,9 +409,9 @@ RUN chmod 700 /etc/jupyterhub/secrets && \
 
 # Creating a file directory for files to spawn to all users - testing this
 # c.Spawner.notebook_dir = '~/files' # could be a good place to place tf models
-ENV NB_DIR /etc/jupyterhub/files
-RUN mkdir $USER_FIELS_DIR &&\
-    cd $USER_FIELS_DIR
+ENV USER_FILES_DIR /etc/jupyterhub/files
+RUN mkdir $USER_FILES_DIR &&\
+    cd $USER_FILES_DIR
 
 # For CNTK (libpython3.6-dev needed) if using Pythohn 3.6
 # RUN add-apt-repository ppa:jonathonf/python-3.6 && apt-get update && apt-get install -y libpython3.6-dev
