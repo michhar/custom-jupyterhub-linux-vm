@@ -30,9 +30,9 @@ Azure:
 * OpenCV - opencv-python==3.4.0.12
 * Scikit-Image - scikit-image==0.13.1
 * Imaged Augmentation Library - imgaug==0.2.5
-* Shapely for spatial analysis [Ref](http://shapely.readthedocs.io/en/stable/manual.html) - Shapely==1.6
-* SimpleCV [Ref](http://simplecv.readthedocs.io/en/1.0/); can even hook up to webcam etc. - [Ref](http://simplecv.readthedocs.io/en/1.0/cookbook/#using-a-camera-kinect-or-virtualcamera)) - SimpleCV==1.3
-* Dask for external memory bound computation (I did digit classification [here](https://github.com/michhar/python-jupyter-notebooks/blob/master/dask/dask-digit-classification.ipynb) - dask==0.17.2
+* Shapely for spatial analysis ([Ref](http://shapely.readthedocs.io/en/stable/manual.html)) - Shapely==1.6
+* SimpleCV ([Ref](http://simplecv.readthedocs.io/en/1.0/)); can even hook up to webcam etc. - ([Ref](http://simplecv.readthedocs.io/en/1.0/cookbook/#using-a-camera-kinect-or-virtualcamera)) - SimpleCV==1.3
+* Dask for external memory bound computation (e.g. digit classification [here](https://github.com/michhar/python-jupyter-notebooks/blob/master/dask/dask-digit-classification.ipynb)) - dask==0.17.2
 
 Other
 
@@ -127,6 +127,6 @@ Create the docker image:
 ## Contributing
 
 * If you'd like to contribute to this project, fork this repo and make a Pull Request.
-* If you see an problems or want a feature, open an Issue.
+* If you see any problems or want a feature, create an Issue.
 * Don't panic.
  
