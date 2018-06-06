@@ -159,7 +159,7 @@ RUN bash -c 'source /user/miniconda3/bin/activate py35 && python -m ipykernel in
 ### Jupyterhub setup ###
 
 # Additional installs
-RUN apt-get install nodejs npm && \
+RUN apt-get update && apt-get install nodejs npm && \
     ln -s /usr/bin/nodejs /usr/bin/node && \
     npm install -g configurable-http-proxy
 
