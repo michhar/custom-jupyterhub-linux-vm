@@ -80,16 +80,11 @@ RUN cd /tmp && \
     conda clean -tipsy && \
     rm -rf /home/$NB_USER/.cache/yarn
 
-USER root
-
-RUN chmod -R 777 $CONDA_DIR && \
-    chmod -R 777 /home/$NB_USER
-
 ENV NB_USER=wonderwoman
 USER $NB_USER
 
-# Create the conda environment
-RUN $CONDA_DIR/bin/conda create -n py35 python=3.5.2 ipykernel
+# Create the conda environment and add a few scientific packages
+RUN $CONDA_DIR/bin/conda create -n py35 python=3.5.2 ipykernel jupyterhub Cython numpy matplotlib scipy
 
 USER root
 
@@ -121,6 +116,9 @@ RUN mkdir /tmp/openmpi && \
 RUN ldconfig /usr/local/cuda-9.0/targets/x86_64-linux/lib/stubs && \
     bash -c 'source /user/miniconda3/bin/activate py35 && HOROVOD_GPU_ALLREDUCE=NCCL HOROVOD_WITH_TENSORFLOW=1 HOROVOD_WITH_PYTORCH=1 python -m pip install --no-cache-dir horovod' && \
     ldconfig
+
+RUN chmod -R 777 $CONDA_DIR && \
+    chmod -R 777 /home/$NB_USER
 
 # Create a wrapper for OpenMPI to allow running as root by default
 RUN mv /usr/local/bin/mpirun /usr/local/bin/mpirun.real && \
