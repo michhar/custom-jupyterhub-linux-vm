@@ -84,7 +84,7 @@ ENV NB_USER=wonderwoman
 USER $NB_USER
 
 # Create the conda environment and add a few scientific packages
-RUN $CONDA_DIR/bin/conda create -n py35 python=3.5.2 ipykernel jupyterhub Cython numpy matplotlib scipy
+RUN $CONDA_DIR/bin/conda create -n py35 python=3.5.2 ipykernel jupyterhub Cython numpy matplotlib scipy scikit-learn
 
 USER root
 
@@ -158,10 +158,12 @@ RUN bash -c 'source /user/miniconda3/bin/activate py35 && python -m ipykernel in
 
 ### Jupyterhub setup ###
 
+USER root
+
 # Additional installs
-RUN apt-get update && apt-get install nodejs npm && \
-    ln -s /usr/bin/nodejs /usr/bin/node && \
-    npm install -g configurable-http-proxy
+RUN apt-get update && apt-get install -y nodejs npm
+RUN ln -s /usr/bin/nodejs /usr/bin/node
+RUN npm install -g configurable-http-proxy
 
 # Create directories
 RUN mkdir -p /etc/init.d/jupyterhub
@@ -178,6 +180,8 @@ RUN chown wonderwoman /user/wonderwoman/
 RUN echo "wonderwoman admin" >> /etc/jupyterhub/userlist
 RUN chown wonderwoman /etc/jupyterhub
 RUN chown wonderwoman /etc/jupyterhub
+
+RUN bash -c 'source /user/miniconda3/bin/activate py35 && python -m pip install notebook'
 
 # Create a default config to /etc/jupyterhub/jupyterhub_config.py
 RUN bash -c 'source /user/miniconda3/bin/activate py35 && jupyterhub --generate-config -f /etc/jupyterhub/jupyterhub_config.py'
