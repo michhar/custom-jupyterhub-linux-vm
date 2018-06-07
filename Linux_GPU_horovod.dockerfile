@@ -156,6 +156,7 @@ RUN apt-get install -y --no-install-recommends subversion && \
     rm -rf /examples/.svn
 
 WORKDIR "/examples"
+COPY . .
 
 # Install general packages from a requirements file
 RUN bash -c 'source /user/miniconda3/bin/activate py35 && pip install -r requirements.txt'
