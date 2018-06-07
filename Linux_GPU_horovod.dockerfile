@@ -125,9 +125,6 @@ RUN ldconfig /usr/local/cuda-9.0/targets/x86_64-linux/lib/stubs && \
     bash -c 'source /user/miniconda3/bin/activate py35 && HOROVOD_GPU_ALLREDUCE=NCCL HOROVOD_WITH_TENSORFLOW=1 HOROVOD_WITH_PYTORCH=1 python -m pip install --no-cache-dir horovod' && \
     ldconfig
 
-RUN chmod -R 777 $CONDA_DIR && \
-    chmod -R 777 /home/$NB_USER
-
 # Create a wrapper for OpenMPI to allow running as root by default
 RUN mv /usr/local/bin/mpirun /usr/local/bin/mpirun.real && \
     echo '#!/bin/bash' > /usr/local/bin/mpirun && \
@@ -167,6 +164,8 @@ RUN bash -c 'source /user/miniconda3/bin/activate py35 && pip install -r require
 # Add the py35 kernel to Jupyter
 RUN bash -c 'source /user/miniconda3/bin/activate py35 && python -m ipykernel install --name py35 --display-name "Python 3.5.2"'
 
+RUN chmod -R 777 $CONDA_DIR && \
+    chmod -R 777 /home/$NB_USER
 
 ### Jupyterhub setup ###
 
