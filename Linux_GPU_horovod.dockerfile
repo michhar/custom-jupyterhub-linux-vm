@@ -28,6 +28,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         python${PYTHON_VERSION} \
         python${PYTHON_VERSION}-dev
 
+# For opencv
+RUN apt-get update && apt-get install -y libsm6 libxext6 libxrender-dev
+
 RUN ln -s /usr/bin/python${PYTHON_VERSION} /usr/bin/python
 
 RUN curl -O https://bootstrap.pypa.io/get-pip.py && \
@@ -61,7 +64,9 @@ RUN useradd -u $NB_UID -m -s /bin/bash -N $NB_USER && \
     chmod -R 777 $CONDA_DIR
 RUN printf "${USER_PW}\n${USER_PW}" | passwd wonderwoman
 
-ENV NB_USER=wonderwoman
+# Add user to sudoers file
+RUN echo "wonderwoman ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+
 USER $NB_USER
 
 # Setup work directory for backward-compatibility
@@ -152,6 +157,9 @@ RUN apt-get install -y --no-install-recommends subversion && \
 
 WORKDIR "/examples"
 
+# Install general packages from a requirements file
+RUN bash -c 'source /user/miniconda3/bin/activate py35 && pip install -r requirements.txt'
+
 # Add the py35 kernel to Jupyter
 RUN bash -c 'source /user/miniconda3/bin/activate py35 && python -m ipykernel install --name py35 --display-name "Python 3.5.2"'
 
@@ -180,8 +188,6 @@ RUN chown wonderwoman /user/wonderwoman/
 RUN echo "wonderwoman admin" >> /etc/jupyterhub/userlist
 RUN chown wonderwoman /etc/jupyterhub
 RUN chown wonderwoman /etc/jupyterhub
-
-RUN bash -c 'source /user/miniconda3/bin/activate py35 && python -m pip install notebook'
 
 # Create a default config to /etc/jupyterhub/jupyterhub_config.py
 RUN bash -c 'source /user/miniconda3/bin/activate py35 && jupyterhub --generate-config -f /etc/jupyterhub/jupyterhub_config.py'
