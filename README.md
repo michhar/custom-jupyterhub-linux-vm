@@ -1,4 +1,4 @@
-# A Custom Linux VM with JupyterHub Built with Docker
+# A Custom Linux VM with JupyterHub for Local or Cloud Deployment
 
 A custom Virtual Machine for Data Science running JupyterHub for multi-tenant Jupyter notebooks. This image can be used stand-alone/locally (CPU or GPU) or deployed as part of the Ubuntu Azure Data Science Virtual Machine (CPU or GPU) to add custom functionality.
 
