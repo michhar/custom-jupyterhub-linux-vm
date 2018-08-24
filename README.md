@@ -4,7 +4,13 @@ A custom Virtual Machine for Data Science running JupyterHub for multi-tenant Ju
 
 The main purpose of this VM is a specialized setup for _computer vision_ tasks.
 
-* **For [Cloud](#azure-cloud-deployment) or [Local Deployment](#run-locally)**
+The ways in which this repo can be used:
+
+* [Local Deployment](#run-locally) with a prebuilt image
+* [Cloud Deployment](#azure-cloud-deployment) to Azure
+* [Build from the dockerfiles](#to-build-the-docker-image-yourself)
+
+The Cloud Deployment runs on top of Azure's Ubuntu Data Science Virtual Machine as a separate instance of jupyterhub which is multitenant and more customized for computer vision tasks.
 
 ## Components
 
