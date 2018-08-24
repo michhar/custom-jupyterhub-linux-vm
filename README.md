@@ -6,9 +6,9 @@ The main purpose of this VM is a specialized setup for _computer vision_ tasks.
 
 The ways in which this repo can be used:
 
-* [Local Deployment](#run-locally) with a prebuilt image
+* [Local Deployment](#run-locally) (GPU/CPU) with a prebuilt image
 * [Cloud Deployment](#azure-cloud-deployment) to Azure
-* [Build from the dockerfiles](#to-build-the-docker-image-yourself)
+* [Build from a dockerfile](#to-build-the-docker-image-yourself) (GPU/CPU)
 
 The Cloud Deployment runs on top of Azure's Ubuntu Data Science Virtual Machine as a separate instance of jupyterhub which is multitenant and more customized for computer vision tasks.
 
@@ -66,17 +66,17 @@ See the ARM template (`azuredeploy.json` and `azuredeploy.paramters.json`) for t
 Run the docker image locally (**CPU-only**):
 
 * Ensure you have Docker installed (Docker for Windows or Docker for Mac are recommended)
-* Run the following docker `run` command at a command prompt as follows (may need `sudo` to enhance priviledges on Unix systems) (for a command prompt in Windows, search for "cmd"):
+* For CPU, run the following docker `run` command at a command prompt as follows (may need `sudo` to enhance priviledges on Unix systems) (for a command prompt in Windows, search for "cmd"):
  
      `docker run -it -v /var/run/docker.sock:/var/run/docker.sock -p 8788:8788  --ipc-host --expose=8788 rheartpython/cvdeep:latest`
 
      `docker run -d -p 5555:5555 -p 80:7842 -p 8788:8788 -v ~/dev/:/root/sharedfolder --ipc-host --expose=8788  rheartpython/cvdeep:latest`
 
-  * Or if on a machine with GPU/Cuda/cudnn support (usually Linux):
+* For an Nvidia GPU with Cuda 9.0/cudnn7 (Linux only, as Windows does not support exposing a system Nvidia GPU in docker, yet):
 
     `sudo nvidia-docker run -it -v /var/run/docker.sock:/var/run/docker.sock -p 8788:8788 --expose=8788 rheartpython/cvdeep_gpu:latest`
      
- * Log into jupyterhub at https://0.0.0.0:8788 or https://localhost:8788 (note the use of `https`) with the user `wonderwoman` and the system variable password you used when building it (the default specified above) and you should also get an Admin panel to make users Admin as well so they can pip install stuff.
+* Log into jupyterhub at https://0.0.0.0:8788 or https://localhost:8788 (note the use of `https`) with the user `wonderwoman` and the system variable password you used when building it (the default specified above) and you should also get an Admin panel to make users Admin as well so they can pip install stuff.
 
 ## Azure Cloud Deployment
 
