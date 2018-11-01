@@ -90,11 +90,16 @@ You can click on the "Deploy to Azure" button to try out the Ubuntu Data Science
     <img src="http://azuredeploy.net/deploybutton.png"/>
 </a>
 
-### GPU DSVM Version with `cvdeep_gpu` Image (_alpha_ release!)
+### GPU DSVM Version with `cvdeep_gpu` Image
 
-COMING SOON
+<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmichhar%2Fcustom-azure-dsvm-jupyterhub%2Fmaster%2Fazuredeploy_gpu.json" target="_blank">
+    <img src="http://azuredeploy.net/deploybutton.png"/>
+</a>
+
+### JupyterHub Login
 
 * Log into jupyterhub at `https://<ip or dns name>:8788` (note the use of `https` and port `8788`) with the user `wonderwoman` and the system variable password you used when building it (the default specified above) and you should also get an Admin panel to make the other users Admin as well so they can pip install stuff.
+* Note, the DSVM already has a JupyterHub system running at port `8000` if interested.  Check out Azure Portal or Azure Docs for more information on what it contains.
 
 ## To Build the Docker Image Yourself
 
