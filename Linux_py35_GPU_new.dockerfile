@@ -222,7 +222,7 @@ RUN bash -c pip3 install azure-cognitiveservices-search-imagesearch==${AZURE_IMA
 RUN bash -c pip3 install -r requirements.txt
 
 # CoreML converter and validation tools for models
-RUN bash -c git clone https://github.com/apple/coremltools.git && cd coremltools && pip3 install -v .
+RUN bash -c git clone https://github.com/apple/coremltools.git && cd coremltools && LC_ALL=C pip3 install -v .
 
 RUN chmod -R 777 $PY_LIB_DIR
 
