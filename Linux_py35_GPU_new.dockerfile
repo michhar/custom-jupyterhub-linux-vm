@@ -153,7 +153,7 @@ RUN useradd -m -s /bin/bash -N $NB_USER && \
     chmod -R 777 $PY_LIB_DIR
 RUN printf "${USER_PW}\n${USER_PW}" | passwd $NB_USER
 
-ENV NB_USER=wonderwoman
+ENV NB_USER=tpol
 USER $NB_USER
 
 # Setup work directory for backward-compatibility
@@ -237,20 +237,20 @@ RUN mkdir -p /etc/jupyterhub
 RUN chmod +x /etc/jupyterhub
 
 # Deal with directory permissions for user and add to userlist
-RUN mkdir -p /hub/user/wonderwoman/
-RUN chown wonderwoman /hub/user/wonderwoman/
-RUN mkdir -p /user/wonderwoman/
-RUN chown wonderwoman /user/wonderwoman/
-RUN echo "wonderwoman admin" >> /etc/jupyterhub/userlist
-RUN chown wonderwoman /etc/jupyterhub
-RUN chown wonderwoman /etc/jupyterhub
+RUN mkdir -p /hub/user/tpol/
+RUN chown tpol /hub/user/tpol/
+RUN mkdir -p /user/tpol/
+RUN chown tpol /user/tpol/
+RUN echo "tpol admin" >> /etc/jupyterhub/userlist
+RUN chown tpol /etc/jupyterhub
+RUN chown tpol /etc/jupyterhub
 
 # Create a default config to /etc/jupyterhub/jupyterhub_config.py
 RUN bash -c jupyterhub --generate-config -f /etc/jupyterhub/jupyterhub_config.py
 RUN bash -c echo "c.PAMAuthenticator.open_sessions=False" >> /etc/jupyterhub/jupyterhub_config.py
-RUN bash -c echo "c.Authenticator.whitelist={\'wonderwoman\'}" >> /etc/jupyterhub/jupyterhub_config.py
+RUN bash -c echo "c.Authenticator.whitelist={\'tpol\'}" >> /etc/jupyterhub/jupyterhub_config.py
 RUN bash -c echo "c.LocalAuthenticator.create_system_users=True" >> /etc/jupyterhub/jupyterhub_config.py
-RUN bash -c echo "c.Authenticator.admin_users={\'wonderwoman\'}" >> /etc/jupyterhub/jupyterhub_config.py
+RUN bash -c echo "c.Authenticator.admin_users={\'tpol\'}" >> /etc/jupyterhub/jupyterhub_config.py
 
 # Copy TLS certificate and key
 ENV SSL_CERT /etc/jupyterhub/secrets/mycert.pem
