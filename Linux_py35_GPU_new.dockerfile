@@ -15,7 +15,6 @@ ENV PYTORCH_VERSION="1.0rc1"
 
 ENV LC_ALL="en_US.UTF-8"
 ENV LC_CTYPE="en_US.UTF-8"
-RUN apt-get update && apt-get install -y dpkg-reconfigure locales
 
 # Install some essential packages
 RUN apt-get update && apt-get install -y \
