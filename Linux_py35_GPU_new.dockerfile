@@ -160,6 +160,8 @@ USER $NB_USER
 RUN mkdir /home/$NB_USER/work && \
     chmod -R 777 /home/$NB_USER
 
+USER root
+
 # Install PyTorch
 RUN git clone --recursive --depth 1 https://github.com/pytorch/pytorch.git -b v${PYTORCH_VERSION}
 
@@ -175,8 +177,6 @@ RUN python3 -m pip install -r requirements.txt
 RUN python3 setup.py bdist_wheel
 
 COPY /pytorch/dist/*.whl ./
-
-USER root
 
 # TensorFlow-GPU, TensorFlow Object Detection API and Keras
 ENV PATH="/usr/local/protobuf-3.5.1/bin:${PATH}"
