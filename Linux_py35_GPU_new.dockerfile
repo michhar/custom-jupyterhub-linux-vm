@@ -192,7 +192,7 @@ RUN LC_ALL=C python3 -m pip install -r requirements.txt
 # Build PyTorch command
 RUN python3 setup.py bdist_wheel
 
-RUN python3 -m pip install dist/*.whl
+RUN bash -c pip3 install dist/*.whl
 
 # TensorFlow-GPU, TensorFlow Object Detection API and Keras
 ENV PATH="/usr/local/protobuf-3.5.1/bin:${PATH}"
