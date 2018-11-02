@@ -218,6 +218,9 @@ RUN bash -c pip3 install cntk==${CNTK_VERSION}
 RUN bash -c pip3 install azure-cognitiveservices-vision-customvision==${AZURE_CVS_VERSION}
 RUN bash -c pip3 install azure-cognitiveservices-search-imagesearch==${AZURE_IMAGESEARCH_VERSION}
 
+WORKDIR /
+COPY requirements.txt .
+
 # Requirements into the Python 3.5
 RUN LC_ALL=C python3 -m pip install -r requirements.txt
 
