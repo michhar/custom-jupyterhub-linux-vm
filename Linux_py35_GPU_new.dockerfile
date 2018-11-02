@@ -97,7 +97,7 @@ RUN USER_PW=$USER_PW
 # Configure environment
 ENV PY_LIB_DIR=/usr/lib/python3.5 \
     SHELL=/bin/bash \
-    NB_USER=wonderwoman \
+    NB_USER=tpol \
     NB_UID=1000 \
     NB_GID=100 \
     LC_ALL=en_US.UTF-8 \
@@ -115,7 +115,7 @@ RUN useradd -u $NB_UID -m -s /bin/bash -N $NB_USER && \
     chmod g+w /etc/passwd /etc/group && \
     chmod -R 777 $HOME && \
     chmod -R 777 $PY_LIB_DIR
-RUN printf "${USER_PW}\n${USER_PW}" | passwd wonderwoman
+RUN printf "${USER_PW}\n${USER_PW}" | passwd tpol
 
 ENV NB_USER=user1
 RUN useradd -m -s /bin/bash -N $NB_USER && \
