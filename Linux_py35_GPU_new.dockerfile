@@ -219,7 +219,7 @@ RUN bash -c pip3 install azure-cognitiveservices-vision-customvision==${AZURE_CV
 RUN bash -c pip3 install azure-cognitiveservices-search-imagesearch==${AZURE_IMAGESEARCH_VERSION}
 
 # Requirements into the Python 3.5
-RUN bash -c pip3 install -r requirements.txt
+RUN LC_ALL=C python3 -m pip install -r requirements.txt
 
 # CoreML converter and validation tools for models
 RUN git clone https://github.com/apple/coremltools.git && cd coremltools && LC_ALL=C pip3 install -v .
@@ -250,7 +250,7 @@ RUN chown tpol /etc/jupyterhub
 RUN chown tpol /etc/jupyterhub
 
 # Create a default config to /etc/jupyterhub/jupyterhub_config.py
-RUN jupyterhub --generate-config -f /etc/jupyterhub/jupyterhub_config.py
+RUN bash -c jupyterhub --generate-config -f /etc/jupyterhub/jupyterhub_config.py
 RUN bash -c echo "c.PAMAuthenticator.open_sessions=False" >> /etc/jupyterhub/jupyterhub_config.py
 RUN bash -c echo "c.Authenticator.whitelist={\'tpol\'}" >> /etc/jupyterhub/jupyterhub_config.py
 RUN bash -c echo "c.LocalAuthenticator.create_system_users=True" >> /etc/jupyterhub/jupyterhub_config.py
