@@ -183,8 +183,7 @@ ENV CXX=c++
 ENV TORCH_CUDA_ARCH_LIST="3.5 5.2 6.0 6.1+PTX" 
 ENV TORCH_NVCC_FLAGS="-Xfatbin -compress-all"
 
-RUN python3 -m pip3 install --upgrade pip
-RUN python3 -m pip3 install -r requirements.txt
+RUN python3 -m pip install -r requirements.txt
 RUN python3 setup.py bdist_wheel
 
 COPY /pytorch/dist/*.whl ./
