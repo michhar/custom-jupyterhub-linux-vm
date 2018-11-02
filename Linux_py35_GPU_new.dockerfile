@@ -211,7 +211,7 @@ WORKDIR /tensorflow/models/research
 RUN cd /tensorflow/models/research &&\
     protoc object_detection/protos/*.proto --python_out=.
 RUN export PYTHONPATH=$PYTHONPATH:`pwd`:`pwd`/slim
-RUN bash -c pip install keras==${KERAS_VERSION}
+RUN bash -c pip3 install keras==${KERAS_VERSION}
 
 # CNTK and Custom Vision Service Python libraries
 RUN bash -c pip3 install cntk==${CNTK_VERSION}
