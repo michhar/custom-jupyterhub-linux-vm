@@ -2,48 +2,6 @@ absl-py==0.1.13
 adal==0.5.0
 asn1crypto==0.24.0
 astor==0.6.2
-azure==2.0.0
-azure-batch==3.0.0
-azure-common==1.1.8
-azure-datalake-store==0.0.17
-azure-graphrbac==0.30.0
-azure-iot-edge-dev-tool==0.53.0
-azure-iot-edge-runtime-ctl==1.0.0rc17
-azure-iothub-device-client==1.1.28.0
-azure-iothub-service-client==1.1.0.20
-azure-keyvault==0.3.7
-azure-mgmt==1.0.0
-azure-mgmt-authorization==0.30.0
-azure-mgmt-batch==4.0.0
-azure-mgmt-cdn==0.30.3
-azure-mgmt-cognitiveservices==1.0.0
-azure-mgmt-compute==1.0.0
-azure-mgmt-containerregistry==0.2.1
-azure-mgmt-datalake-analytics==0.1.6
-azure-mgmt-datalake-nspkg==2.0.0
-azure-mgmt-datalake-store==0.1.6
-azure-mgmt-devtestlabs==2.0.0
-azure-mgmt-dns==1.0.1
-azure-mgmt-documentdb==0.1.3
-azure-mgmt-iothub==0.2.2
-azure-mgmt-keyvault==0.31.0
-azure-mgmt-logic==2.1.0
-azure-mgmt-monitor==0.2.1
-azure-mgmt-network==1.0.0
-azure-mgmt-nspkg==2.0.0
-azure-mgmt-rdbms==0.1.0
-azure-mgmt-redis==4.1.1
-azure-mgmt-resource==1.1.0
-azure-mgmt-scheduler==1.1.3
-azure-mgmt-sql==0.5.3
-azure-mgmt-storage==1.0.0
-azure-mgmt-trafficmanager==0.30.0
-azure-mgmt-web==0.32.0
-azure-nspkg==2.0.0
-azure-servicebus==0.21.1
-azure-servicefabric==5.6.130
-azure-servicemanagement-legacy==0.20.6
-azure-storage==0.34.3
 bleach==1.5.0
 certifi==2017.11.5
 cffi==1.11.2
@@ -125,11 +83,15 @@ pytest==2.9.2
 selectivesearch==0.4
 scikit-image==0.13.1
 easydict==1.7
-opencv-python==3.4.3
+opencv-python==3.4.3.18
 Shapely==1.6
 SimpleCV==1.3
 # mahotas==1.4.4
 # milk==0.6.1
 imgaug==0.2.6
+azure==4.0.0
+msrestazure==0.5.0
+azureml-sdk[notebooks,automl]==0.1.68
+azure-cli==2.0.49
 
 

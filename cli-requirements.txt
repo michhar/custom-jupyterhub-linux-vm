@@ -42,4 +42,4 @@ azure-cli-sf==1.0.8
 azure-cli-sql==2.0.15
 azure-cli-storage==2.0.19
 azure-cli-vm==2.0.18
-azure-ml-api-sdk
+azureml-sdk[notebooks,automl]
