@@ -10,39 +10,39 @@ The ways in which this repo can be used:
 * [Cloud Deployment](#azure-cloud-deployment) to Azure
 * [Build from a dockerfile](#to-build-the-docker-image-yourself) (GPU/CPU)
 
-The Cloud Deployment runs on top of Azure's Ubuntu Data Science Virtual Machine as a separate instance of jupyterhub which is multitenant and more customized for computer vision tasks.
+The Cloud Deployment runs on top of Azure's Ubuntu Data Science Virtual Machine as a separate instance of JupyterHub which is multitenant and more customized for computer vision tasks.
 
 ## Components
 
-**Python 3.5 (Miniconda release)**
+**Python 3.5**
 
 Deep Learning:
 
-* TensorFlow 1.6.0 (including Object Detection API)
-* PyTorch 0.4.0
+* TensorFlow 1.12.0 (including Object Detection API)
+* PyTorch 1.0
 * Torchvision 0.2.1
-* CNTK 2.5
+* CNTK 2.6
 * Keras 2.1.6
 
 Azure:
 
 * Azure CLI 2.0.22
-* Azure ML CLI 0.1.0a27.post3
+* Azure ML Python SDK 0.1.68
 * Azure Image Search SDK 1.0.0
-* Azure Custom Vision SDK 0.2.0
+* Azure Custom Vision Python SDK 0.3.0
 
-### Computer Vision Related
+Computer Vision Related:
 
-* OpenCV - opencv-python==3.4.0.12
+* OpenCV - opencv-python==3.4.3.18
 * Scikit-Image - scikit-image==0.13.1
-* Imaged Augmentation Library - imgaug==0.2.5
+* Imaged Augmentation Library - imgaug==0.2.6
 * Shapely for spatial analysis ([Ref](http://shapely.readthedocs.io/en/stable/manual.html)) - Shapely==1.6
 * SimpleCV ([Ref](http://simplecv.readthedocs.io/en/1.0/)); can even hook up to webcam etc. - ([Ref](http://simplecv.readthedocs.io/en/1.0/cookbook/#using-a-camera-kinect-or-virtualcamera)) - SimpleCV==1.3
 * Dask for external memory bound computation (e.g. digit classification [here](https://github.com/michhar/python-jupyter-notebooks/blob/master/dask/dask-digit-classification.ipynb)) - dask==0.17.2
 
-Other
+Other:
 
-* JupyterHub 1.7.2
+* JupyterHub 0.9.4
 
 ### Python 3.5 TFP - For Experimenting with Probability Library in TensorFlow
 
@@ -52,7 +52,7 @@ Other
 
 ### Users Set Up on VM
 
-* **5 users**:  wonderwoman, user1, user2, user3, user4
+* **5 users**:  tpol, user1, user2, user3, user4
 * Password is the one used to build the image.  The default is **"Python3!"**.
 
 See the ARM template (`azuredeploy.json` and `azuredeploy.paramters.json`) for the specs on deploying to Azure.
@@ -75,8 +75,10 @@ Run the docker image locally (**CPU-only**):
 * For an Nvidia GPU with Cuda 9.0/cudnn7 (Linux only, as Windows does not support exposing a system Nvidia GPU in docker, yet):
 
     `sudo nvidia-docker run -it -v /var/run/docker.sock:/var/run/docker.sock -p 8788:8788 --expose=8788 rheartpython/cvdeep_gpu:latest`
-     
-* Log into jupyterhub at https://0.0.0.0:8788 or https://localhost:8788 (note the use of `https`) with the user `wonderwoman` and the system variable password you used when building it (the default specified above) and you should also get an Admin panel to make users Admin as well so they can pip install stuff.
+
+### JupyterHub Login
+
+* Log into JupyterHub at https://0.0.0.0:8788 or https://localhost:8788 (note the use of `https`) with the user `tpol` and the system variable password you used when building it (the default specified above) and you should also get an Admin panel to make users Admin as well so they can pip install stuff.
 
 ## Azure Cloud Deployment
 
@@ -98,7 +100,7 @@ You can click on the "Deploy to Azure" button to try out the Ubuntu Data Science
 
 ### JupyterHub Login
 
-* Log into jupyterhub at `https://<ip or dns name>:8788` (note the use of `https` and port `8788`) with the user `wonderwoman` and the system variable password you used when building it (the default specified above) and you should also get an Admin panel to make the other users Admin as well so they can pip install stuff.
+* Log into jupyterhub at `https://<ip or dns name>:8788` (note the use of `https` and port `8788`) with the user `tpol` and the system variable password you used when building it (the default specified above) and you should also get an Admin panel to make the other users Admin as well so they can pip install stuff.
 * Note, the DSVM already has a JupyterHub system running at port `8000` if interested.  Check out Azure Portal or Azure Docs for more information on what it contains.
 
 ## To Build the Docker Image Yourself

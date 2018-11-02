@@ -255,7 +255,7 @@ RUN chown tpol /etc/jupyterhub
 RUN chown tpol /etc/jupyterhub
 
 # Create a default config to /etc/jupyterhub/jupyterhub_config.py
-RUN bash -c jupyterhub --generate-config -f /etc/jupyterhub/jupyterhub_config.py
+RUN LC_ALL=C jupyterhub --generate-config -f /etc/jupyterhub/jupyterhub_config.py
 RUN bash -c echo "c.PAMAuthenticator.open_sessions=False" >> /etc/jupyterhub/jupyterhub_config.py
 RUN bash -c echo "c.Authenticator.whitelist={\'tpol\'}" >> /etc/jupyterhub/jupyterhub_config.py
 RUN bash -c echo "c.LocalAuthenticator.create_system_users=True" >> /etc/jupyterhub/jupyterhub_config.py
