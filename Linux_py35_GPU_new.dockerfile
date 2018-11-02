@@ -169,14 +169,26 @@ WORKDIR pytorch
 
 ENV USE_OPENCV=1
 ENV BUILD_TORCH=ON
+
+ENV CMAKE_PREFIX_PATH="/usr/bin/"
+ENV LD_LIBRARY_PATH=/usr/local/cuda/lib64:/usr/local/lib:$LD_LIBRARY_PATH
+ENV CUDA_BIN_PATH=/usr/local/cuda/bin
+ENV CUDA_TOOLKIT_ROOT_DIR=/usr/local/cuda/
+ENV CUDNN_LIB_DIR=/usr/local/cuda/lib64
+ENV CUDA_HOST_COMPILER=cc \
 ENV USE_CUDA=1
 ENV USE_NNPACK=1
+ENV CC=cc
+ENV CXX=c++
+ENV TORCH_CUDA_ARCH_LIST="3.5 5.2 6.0 6.1+PTX" 
+ENV TORCH_NVCC_FLAGS="-Xfatbin -compress-all"
 
 RUN python3 -m pip install --upgrade pip
 RUN python3 -m pip install -r requirements.txt
 RUN python3 setup.py bdist_wheel
 
 COPY /pytorch/dist/*.whl ./
+RUN python3 -m pip install *.whl
 
 # TensorFlow-GPU, TensorFlow Object Detection API and Keras
 ENV PATH="/usr/local/protobuf-3.5.1/bin:${PATH}"
