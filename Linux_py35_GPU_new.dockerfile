@@ -165,7 +165,7 @@ RUN mkdir /home/$NB_USER/work && \
 
 USER root
 
-# Install PyTorch
+# Install PyTorch from source
 RUN git clone --recursive --depth 1 https://github.com/pytorch/pytorch.git -b v${PYTORCH_VERSION}
 
 WORKDIR pytorch
@@ -186,7 +186,10 @@ ENV CXX=c++
 ENV TORCH_CUDA_ARCH_LIST="3.5 5.2 6.0 6.1+PTX" 
 ENV TORCH_NVCC_FLAGS="-Xfatbin -compress-all"
 
-RUN python3 -m pip install -r requirements.txt
+# This is the PyTorch requirements.txt
+RUN LC_ALL=C python3 -m pip install -r requirements.txt
+
+# Build PyTorch command
 RUN python3 setup.py bdist_wheel
 
 COPY /pytorch/dist/*.whl ./
