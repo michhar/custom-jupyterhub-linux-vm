@@ -168,7 +168,7 @@ RUN mkdir /home/$NB_USER/work && \
 USER root
 
 # Install PyTorch from source
-RUN git clone --recursive --depth 1 https://github.com/pytorch/pytorch.git
+RUN git clone --recursive --depth 1 https://github.com/pytorch/pytorch.git && cd pytorch && git checkout 8619230
 
 WORKDIR pytorch
 
@@ -192,7 +192,6 @@ ENV TORCH_NVCC_FLAGS="-Xfatbin -compress-all"
 RUN LC_ALL=C python3 -m pip install -r requirements.txt
 
 # Build PyTorch command
-RUN cd pytorch && git checkout 8619230
 RUN python3 setup.py bdist_wheel
 
 RUN LC_ALL=C python3 -m pip install dist/torch-1.0.0a0+8619230-cp35-cp35m-linux_x86_64.whl
