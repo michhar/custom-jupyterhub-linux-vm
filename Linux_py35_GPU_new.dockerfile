@@ -13,9 +13,9 @@ ENV AZURE_CVS_VERSION="0.2.0"
 ENV AZURE_IMAGESEARCH_VERSION="1.0.0"
 ENV PYTORCH_VERSION="1.0rc1"
 
-ENV LANGUAGE = (unset),
-ENV LC_ALL = "en_US.utf8",
-ENV LC_CTYPE = "en_US.utf8",
+ENV LANGUAGE = (unset)
+ENV LC_ALL = "en_US.utf8"
+ENV LC_CTYPE = "en_US.utf8"
 ENV LANG = (unset)
 
 # Install some essential packages
