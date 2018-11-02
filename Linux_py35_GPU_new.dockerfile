@@ -192,9 +192,10 @@ ENV TORCH_NVCC_FLAGS="-Xfatbin -compress-all"
 RUN LC_ALL=C python3 -m pip install -r requirements.txt
 
 # Build PyTorch command
-RUN git checkout 8619230 && python3 setup.py bdist_wheel
+RUN git checkout 8619230
+RUN python3 setup.py bdist_wheel
 
-RUN LC_ALL=C python3 -m pip install dist/torch-1.0.0a0+ff608a9-cp35-cp35m-linux_x86_64.whl
+RUN LC_ALL=C python3 -m pip install dist/torch-1.0.0a0+8619230-cp35-cp35m-linux_x86_64.whl
 
 # TensorFlow-GPU, TensorFlow Object Detection API and Keras
 ENV PATH="/usr/local/protobuf-3.5.1/bin:${PATH}"
