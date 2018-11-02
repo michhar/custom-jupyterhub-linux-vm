@@ -47,9 +47,11 @@ RUN apt-get update && apt-get install -y \
     g++ \
     unzip \
     zlib1g-dev \
-    python-dev \
+    python3-dev \
     wget \
-    bzip2
+    bzip2 \
+    libssl-dev \
+    libffi-dev
 
 # MKL (for CNTK and others)
 RUN mkdir /usr/local/mklml && \
