@@ -168,7 +168,7 @@ RUN mkdir /home/$NB_USER/work && \
 USER root
 
 # Install PyTorch from source
-RUN git clone --recursive --depth 1 https://github.com/pytorch/pytorch.git && cd pytorch && git checkout 8619230
+RUN git clone --recursive --depth 1 https://github.com/pytorch/pytorch.git && cd pytorch && git checkout -b 8619230
 
 WORKDIR pytorch
 
