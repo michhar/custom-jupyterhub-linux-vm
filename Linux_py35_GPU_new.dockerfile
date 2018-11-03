@@ -233,8 +233,12 @@ RUN chmod -R 777 $PY_LIB_DIR
 
 ### Jupyterhub setup ###
 
-# Additional installs
-RUN apt-get install nodejs npm
+# Using Ubuntu
+RUN curl -sL https://deb.nodesource.com/setup_11.x | sudo -E bash - &&\
+    apt-get install -y nodejs &&
+    apt-get install npm
+
+# Additional configuring
 RUN ln -s /usr/bin/nodejs /usr/bin/node
 RUN npm install -g configurable-http-proxy
 
