@@ -197,7 +197,7 @@ ENV TORCH_NVCC_FLAGS="-Xfatbin -compress-all"
 RUN LC_ALL=C python3 -m pip install -r requirements.txt
 
 # Build PyTorch command
-RUN git checkout -b ${PYTORCH_VERSION} && python3 setup.py bdist_wheel
+RUN git checkout ${PYTORCH_VERSION} && python3 setup.py bdist_wheel
 
 RUN LC_ALL=C python3 -m pip install dist/*.whl
 
