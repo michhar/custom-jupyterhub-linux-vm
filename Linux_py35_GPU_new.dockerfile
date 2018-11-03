@@ -11,7 +11,7 @@ ENV KERAS_VERSION="2.1.6"
 ENV TORCHVISION_VERSION="0.2.1"
 ENV AZURE_CVS_VERSION="0.2.0"
 ENV AZURE_IMAGESEARCH_VERSION="1.0.0"
-ENV PYTORCH_VERSION="1.0rc1"
+ENV PYTORCH_VERSION="8619230"
 
 # Locale setting
 ENV LC_ALL=C
@@ -168,7 +168,7 @@ RUN mkdir /home/$NB_USER/work && \
 USER root
 
 # Install PyTorch from source
-RUN git clone --recursive --depth 1 https://github.com/pytorch/pytorch.git && cd pytorch && git checkout -b 8619230
+RUN git clone --recursive --depth 1 https://github.com/pytorch/pytorch.git && cd pytorch && git checkout -b ${PYTORCH_VERSION}
 
 WORKDIR pytorch
 
