@@ -20,12 +20,13 @@ ENV LC_ALL=C
 RUN apt-get update && apt-get install -y \
     apt-transport-https \
     software-properties-common \
-    nodejs \
-    npm \
+    # nodejs \
+    # npm \
     zip \
     sudo \
     libsm6 \
-    libxext6
+    libxext6 &&\
+    rm -rf /var/lib/apt/lists/*
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
          build-essential \
@@ -51,7 +52,11 @@ RUN apt-get update && apt-get install -y \
     wget \
     bzip2 \
     libssl-dev \
-    libffi-dev
+    libffi-dev &&\
+    rm -rf /var/lib/apt/lists/*
+
+# Nodejs 11
+RUN curl -sL https://deb.nodesource.com/setup_11.x | sudo -E bash - 
 
 # MKL (for CNTK and others)
 RUN mkdir /usr/local/mklml && \
@@ -192,7 +197,7 @@ ENV TORCH_NVCC_FLAGS="-Xfatbin -compress-all"
 RUN LC_ALL=C python3 -m pip install -r requirements.txt
 
 # Build PyTorch command
-RUN python3 setup.py bdist_wheel
+RUN git checkout -b ${PYTORCH_VERSION} && python3 setup.py bdist_wheel
 
 RUN LC_ALL=C python3 -m pip install dist/*.whl
 
@@ -232,11 +237,6 @@ RUN git clone https://github.com/apple/coremltools.git && cd coremltools && LC_A
 RUN chmod -R 777 $PY_LIB_DIR
 
 ### Jupyterhub setup ###
-
-# Using Ubuntu
-RUN curl -sL https://deb.nodesource.com/setup_11.x | sudo -E bash - && \
-    apt-get install -y nodejs && \
-    apt-get install npm
 
 # Additional configuring
 RUN ln -s /usr/bin/nodejs /usr/bin/node
