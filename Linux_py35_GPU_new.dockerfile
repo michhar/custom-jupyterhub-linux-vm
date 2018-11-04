@@ -20,8 +20,6 @@ ENV LC_ALL=C
 RUN apt-get update && apt-get install -y \
     apt-transport-https \
     software-properties-common \
-    # nodejs \
-    # npm \
     zip \
     sudo \
     libsm6 \
@@ -55,8 +53,10 @@ RUN apt-get update && apt-get install -y \
     libffi-dev &&\
     rm -rf /var/lib/apt/lists/*
 
-# Nodejs 11
-RUN curl -sL https://deb.nodesource.com/setup_11.x | sudo -E bash - 
+# Nodejs v11 because current apt-get has v4
+RUN curl -sL https://deb.nodesource.com/setup_11.x | sudo -E bash -
+RUN sudo apt-get install -y nodejs
+RUN npm install npm --global
 
 # MKL (for CNTK and others)
 RUN mkdir /usr/local/mklml && \
@@ -237,8 +237,6 @@ RUN git clone https://github.com/apple/coremltools.git && cd coremltools && LC_A
 RUN chmod -R 777 $PY_LIB_DIR
 
 ### Jupyterhub setup ###
-
-RUN apt-get update && apt-get install -y npm
 
 # Additional configuring
 RUN ln -s /usr/bin/nodejs /usr/bin/node
