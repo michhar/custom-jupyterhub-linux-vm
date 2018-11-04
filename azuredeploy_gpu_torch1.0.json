@@ -196,7 +196,7 @@
                 "fileUris": [
                   "[variables('scriptUri')]"
                 ],
-                "commandToExecute": "sudo sh install_gpu.sh"
+                "commandToExecute": "sudo sh install_gpu_torch1.0.sh"
               }
             }
           }

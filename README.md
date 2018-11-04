@@ -19,7 +19,7 @@ The Cloud Deployment runs on top of Azure's Ubuntu Data Science Virtual Machine 
 Deep Learning:
 
 * TensorFlow 1.12.0 (including Object Detection API)
-* PyTorch 1.0
+* PyTorch 0.4.1 or 1.0
 * Torchvision 0.2.1
 * CNTK 2.6
 * Keras 2.1.6
@@ -86,17 +86,16 @@ You can click on the "Deploy to Azure" button to try out the Ubuntu Data Science
 
 **IMPORTANT NOTE**: Before you proceed to use the **Deploy to Azure** button you must perform a one-time task to accept the terms of the data science virtual machine on your Azure subscription. You can do this by visiting [Configure Programmatic Deployment](https://ms.portal.azure.com/#blade/Microsoft_Azure_Marketplace/LegalTermsSkuProgrammaticAccessBlade/legalTermsSkuProgrammaticAccessData/%7B%22product%22%3A%7B%22publisherId%22%3A%22microsoft-ads%22%2C%22offerId%22%3A%22linux-data-science-vm%22%2C%22planId%22%3A%22linuxdsvm%22%7D%7D)
 
-### CPU DSVM Version with `cvdeep` Image
+### Deployment Options for Azure
 
-<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmichhar%2Fcustom-azure-dsvm-jupyterhub%2Fmaster%2Fazuredeploy.json" target="_blank">
-    <img src="http://azuredeploy.net/deploybutton.png"/>
-</a>
-
-### GPU DSVM Version with `cvdeep_gpu` Image
-
-<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmichhar%2Fcustom-azure-dsvm-jupyterhub%2Fmaster%2Fazuredeploy_gpu.json" target="_blank">
-    <img src="http://azuredeploy.net/deploybutton.png"/>
-</a>
+| Description | Deploy Here |
+| --- | --- |
+| CPU DSVM Version | <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmichhar%2Fcustom-azure-dsvm-jupyterhub%2Fmaster%2Fazuredeploy.json" target="_blank"><img src="http://azuredeploy.net/deploybutton.png"/>
+</a> |
+| GPU DSVM Version (PyTorch 0.4.1) | <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmichhar%2Fcustom-azure-dsvm-jupyterhub%2Fmaster%2Fazuredeploy_gpu_torch0.4.1.json" target="_blank"><img src="http://azuredeploy.net/deploybutton.png"/>
+</a> |
+| GPU DSVM Version (PyTorch 1.0) | <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmichhar%2Fcustom-azure-dsvm-jupyterhub%2Fmaster%2Fazuredeploy_gpu_torch1.0.json" target="_blank"><img src="http://azuredeploy.net/deploybutton.png"/>
+</a> |
 
 ### JupyterHub Login
 
