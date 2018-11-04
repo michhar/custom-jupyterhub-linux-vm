@@ -238,6 +238,8 @@ RUN chmod -R 777 $PY_LIB_DIR
 
 ### Jupyterhub setup ###
 
+RUN apt-get update && apt-get install -y npm
+
 # Additional configuring
 RUN ln -s /usr/bin/nodejs /usr/bin/node
 RUN npm install -g configurable-http-proxy
