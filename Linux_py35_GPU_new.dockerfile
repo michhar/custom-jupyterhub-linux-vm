@@ -114,7 +114,7 @@ ENV PY_LIB_DIR=/usr/lib/python3.5 \
     LANG=en_US.UTF-8 \
     LANGUAGE=en_US.UTF-8
 ENV PATH=$PY_LIB_DIR/bin:$PATH \
-    HOME=/home/$NB_USER
+    HOME=/home
 
 # ADD fix-permissions /usr/bin/fix-permissions
 # Create users with UID=1000 and in the 'users' group
@@ -123,8 +123,7 @@ RUN useradd -u $NB_UID -m -s /bin/bash -N $NB_USER && \
     mkdir -p $PY_LIB_DIR && \
     chown $NB_USER:$NB_GID $PY_LIB_DIR && \
     chmod g+w /etc/passwd /etc/group && \
-    chmod -R 777 $HOME && \
-    chmod -R 777 $PY_LIB_DIR
+    chmod -R 777 $HOME/$NB_USER
 RUN printf "${USER_PW}\n${USER_PW}" | passwd tpol
 
 ENV NB_USER=user1
@@ -132,8 +131,7 @@ RUN useradd -m -s /bin/bash -N $NB_USER && \
     mkdir -p $PY_LIB_DIR && \
     chown $NB_USER:$NB_GID $PY_LIB_DIR && \
     chmod g+w /etc/passwd /etc/group && \
-    chmod -R 777 $HOME && \
-    chmod -R 777 $PY_LIB_DIR
+    chmod -R 777 $HOME/$NB_USER
 RUN printf "${USER_PW}\n${USER_PW}" | passwd $NB_USER
 
 ENV NB_USER=user2
@@ -141,8 +139,7 @@ RUN useradd -m -s /bin/bash -N $NB_USER && \
     mkdir -p $PY_LIB_DIR && \
     chown $NB_USER:$NB_GID $PY_LIB_DIR && \
     chmod g+w /etc/passwd /etc/group && \
-    chmod -R 777 $HOME && \
-    chmod -R 777 $PY_LIB_DIR
+    chmod -R 777 $HOME/$NB_USER
 RUN printf "${USER_PW}\n${USER_PW}" | passwd $NB_USER
 
 ENV NB_USER=user3
@@ -150,8 +147,7 @@ RUN useradd -m -s /bin/bash -N $NB_USER && \
     mkdir -p $PY_LIB_DIR && \
     chown $NB_USER:$NB_GID $PY_LIB_DIR && \
     chmod g+w /etc/passwd /etc/group && \
-    chmod -R 777 $HOME && \
-    chmod -R 777 $PY_LIB_DIR
+    chmod -R 777 $HOME/$NB_USER
 RUN printf "${USER_PW}\n${USER_PW}" | passwd $NB_USER
 
 ENV NB_USER=user4
@@ -159,8 +155,7 @@ RUN useradd -m -s /bin/bash -N $NB_USER && \
     mkdir -p $PY_LIB_DIR && \
     chown $NB_USER:$NB_GID $PY_LIB_DIR && \
     chmod g+w /etc/passwd /etc/group && \
-    chmod -R 777 $HOME && \
-    chmod -R 777 $PY_LIB_DIR
+    chmod -R 777 $HOME/$NB_USER
 RUN printf "${USER_PW}\n${USER_PW}" | passwd $NB_USER
 
 ENV NB_USER=tpol
@@ -171,6 +166,8 @@ RUN mkdir /home/$NB_USER/work && \
     chmod -R 777 /home/$NB_USER
 
 USER root
+
+RUN chmod -R 777 $PY_LIB_DIR
 
 # Install PyTorch from source
 RUN git clone --recursive --depth 1 https://github.com/pytorch/pytorch.git && cd pytorch && git checkout -b ${PYTORCH_VERSION}
@@ -259,10 +256,10 @@ RUN chown tpol /etc/jupyterhub
 
 # Create a default config to /etc/jupyterhub/jupyterhub_config.py
 RUN LC_ALL=C jupyterhub --generate-config -f /etc/jupyterhub/jupyterhub_config.py
-RUN bash -c echo "c.PAMAuthenticator.open_sessions=False" >> /etc/jupyterhub/jupyterhub_config.py
-RUN bash -c echo "c.Authenticator.whitelist={\'tpol\'}" >> /etc/jupyterhub/jupyterhub_config.py
-RUN bash -c echo "c.LocalAuthenticator.create_system_users=True" >> /etc/jupyterhub/jupyterhub_config.py
-RUN bash -c echo "c.Authenticator.admin_users={\'tpol\'}" >> /etc/jupyterhub/jupyterhub_config.py
+RUN bash -c echo c.PAMAuthenticator.open_sessions=False >> /etc/jupyterhub/jupyterhub_config.py
+RUN bash -c echo c.Authenticator.whitelist={'tpol'} >> /etc/jupyterhub/jupyterhub_config.py
+RUN bash -c echo c.LocalAuthenticator.create_system_users=True >> /etc/jupyterhub/jupyterhub_config.py
+RUN bash -c echo c.Authenticator.admin_users={'tpol'} >> /etc/jupyterhub/jupyterhub_config.py
 
 # Copy TLS certificate and key
 ENV SSL_CERT /etc/jupyterhub/secrets/mycert.pem
@@ -280,4 +277,4 @@ RUN mkdir $USER_FILES_DIR &&\
 
 RUN cd /home
 
-CMD bash -c "jupyterhub -f /etc/jupyterhub/jupyterhub_config.py --JupyterHub.Authenticator.whitelist=\{\'user1\',\'user2\',\'user3\',\'user4\'\} --JupyterHub.hub_ip='' --JupyterHub.ip='' JupyterHub.cookie_secret=bytes.fromhex\('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'\) Spawner.cmd=\['/user/miniconda3/bin/jupyterhub-singleuser'\] --ip '' --port 8788 --ssl-key /etc/jupyterhub/secrets/mykey.key --ssl-cert /etc/jupyterhub/secrets/mycert.pem"
+CMD bash -c "jupyterhub -f /etc/jupyterhub/jupyterhub_config.py --JupyterHub.Authenticator.whitelist=\{\'tpol\',\'user1\',\'user2\',\'user3\',\'user4\'\} --JupyterHub.hub_ip='' --JupyterHub.ip='' JupyterHub.cookie_secret=bytes.fromhex\('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'\) Spawner.cmd=\['/user/miniconda3/bin/jupyterhub-singleuser'\] --ip '' --port 8788 --ssl-key /etc/jupyterhub/secrets/mykey.key --ssl-cert /etc/jupyterhub/secrets/mycert.pem"
