@@ -196,7 +196,7 @@ RUN git clone https://github.com/pytorch/pytorch.git &&\
     git submodule update --init --recursive &&\
     echo "extra_link_args=['-L/usr/lib/x86_64-linux-gnu/']" | cat - setup.py > temp && mv temp setup.py &&\
     pip3 install pyyaml &&\
-    pip3 install requirements.txt &&\
+    pip3 install -r requirements.txt &&\
     USE_OPENCV=1 \
     BUILD_TORCH=ON \
     CMAKE_PREFIX_PATH="/usr/bin/" \
