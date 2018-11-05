@@ -193,8 +193,8 @@ RUN chmod -R 777 $PY_LIB_DIR
 # Build PyTorch command
 RUN git clone https://github.com/pytorch/pytorch.git &&\
     cd pytorch && git checkout ${PYTORCH_COMMIT_ID} && \
-    git submodule update --init --recursive &&\
-    pip3 install pyyaml &&\
+    git submodule update --init --recursive  &&\
+    pip3 install pyyaml==3.13 &&\
     pip3 install -r requirements.txt &&\
     USE_OPENCV=1 \
     BUILD_TORCH=ON \
