@@ -194,7 +194,6 @@ RUN chmod -R 777 $PY_LIB_DIR
 RUN git clone https://github.com/pytorch/pytorch.git &&\
     cd pytorch && git checkout ${PYTORCH_COMMIT_ID} && \
     git submodule update --init --recursive &&\
-    echo "extra_link_args=['-L/usr/lib/x86_64-linux-gnu/']" | cat - setup.py > temp && mv temp setup.py &&\
     pip3 install pyyaml &&\
     pip3 install -r requirements.txt &&\
     USE_OPENCV=1 \
@@ -215,7 +214,7 @@ RUN git clone https://github.com/pytorch/pytorch.git &&\
 
 WORKDIR pytorch
 
-RUN pip3 install dist/torch-1.0.0a0+${PYTORCH_COMMIT_ID}-cp35-cp35m-manylinux1_x86_64.whl
+RUN pip3 install dist/*.whl
 
 # TensorFlow-GPU, TensorFlow Object Detection API and Keras
 ENV PATH="/usr/local/protobuf-3.5.1/bin:${PATH}"
