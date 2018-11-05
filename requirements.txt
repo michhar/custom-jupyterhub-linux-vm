@@ -49,6 +49,7 @@ Pillow==5.0.0
 pickleshare==0.7.4
 prompt-toolkit==1.0.15
 protobuf==3.5.2.post1
+pyyaml
 pycparser==2.18
 Pygments==2.2.0
 PyJWT==1.5.3

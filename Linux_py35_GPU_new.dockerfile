@@ -171,31 +171,29 @@ USER root
 RUN chmod -R 777 $PY_LIB_DIR
 
 # Install PyTorch from source
-RUN git clone --recursive --depth 1 https://github.com/pytorch/pytorch.git && cd pytorch && git checkout -b ${PYTORCH_VERSION}
+RUN git clone --recursive --depth 1 https://github.com/pytorch/pytorch.git
 
 WORKDIR pytorch
-
-ENV USE_OPENCV=1
-ENV BUILD_TORCH=ON
-
-ENV CMAKE_PREFIX_PATH="/usr/bin/"
-ENV LD_LIBRARY_PATH=/usr/local/cuda/lib64:/usr/local/lib:$LD_LIBRARY_PATH
-ENV CUDA_BIN_PATH=/usr/local/cuda/bin
-ENV CUDA_TOOLKIT_ROOT_DIR=/usr/local/cuda/
-ENV CUDNN_LIB_DIR=/usr/local/cuda/lib64
-ENV CUDA_HOST_COMPILER=cc
-ENV USE_CUDA=1
-ENV USE_NNPACK=1
-ENV CC=cc
-ENV CXX=c++
-ENV TORCH_CUDA_ARCH_LIST="3.5 5.2 6.0 6.1+PTX" 
-ENV TORCH_NVCC_FLAGS="-Xfatbin -compress-all"
 
 # This is the PyTorch requirements.txt
 RUN bash -c pip3 install -r requirements.txt
 
 # Build PyTorch command
-RUN git checkout ${PYTORCH_VERSION} && python3 setup.py bdist_wheel
+RUN git checkout -b ${PYTORCH_VERSION} && USE_OPENCV=1 \
+    BUILD_TORCH=ON \
+    CMAKE_PREFIX_PATH="/usr/bin/" \
+    LD_LIBRARY_PATH=/usr/local/cuda/lib64:/usr/local/lib:$LD_LIBRARY_PATH \
+    CUDA_BIN_PATH=/usr/local/cuda/bin \
+    CUDA_TOOLKIT_ROOT_DIR=/usr/local/cuda/ \
+    CUDNN_LIB_DIR=/usr/local/cuda/lib64 \
+    CUDA_HOST_COMPILER=cc \
+    USE_CUDA=1 \
+    USE_NNPACK=1 \
+    CC=cc \
+    CXX=c++ \
+    TORCH_CUDA_ARCH_LIST="3.5 5.2 6.0 6.1+PTX" \
+    TORCH_NVCC_FLAGS="-Xfatbin -compress-all" \
+    python3 setup.py bdist_wheel
 
 RUN bash -c pip3 install dist/torch-${PYTORCH_VERSION_FULL}-cp35-cp35m-manylinux1_x86_64.whl
 
