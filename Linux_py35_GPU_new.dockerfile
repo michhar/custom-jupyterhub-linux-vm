@@ -194,11 +194,12 @@ RUN chmod -R 777 $PY_LIB_DIR
 RUN git clone https://github.com/pytorch/pytorch.git &&\
     cd pytorch && git checkout ${PYTORCH_COMMIT_ID} && \
     git submodule update --init --recursive &&\
+    echo "extra_link_args=['-L/usr/lib/x86_64-linux-gnu/']" | cat - setup.py > temp && mv temp setup.py &&\
     pip3 install pyyaml &&\
     USE_OPENCV=1 \
     BUILD_TORCH=ON \
     CMAKE_PREFIX_PATH="/usr/bin/" \
-    LD_LIBRARY_PATH=/usr/local/cuda/lib64:/usr/local/lib:$LD_LIBRARY_PATH \
+    LD_LIBRARY_PATH=/usr/local/cuda/lib64:/usr/local/lib:/usr/lib/x86_64-linux-gnu/:$LD_LIBRARY_PATH \
     CUDA_BIN_PATH=/usr/local/cuda/bin \
     CUDA_TOOLKIT_ROOT_DIR=/usr/local/cuda/ \
     CUDNN_LIB_DIR=/usr/local/cuda/lib64 \
@@ -209,7 +210,6 @@ RUN git clone https://github.com/pytorch/pytorch.git &&\
     CXX=c++ \
     TORCH_CUDA_ARCH_LIST="3.5 5.2 6.0 6.1+PTX" \
     TORCH_NVCC_FLAGS="-Xfatbin -compress-all" \
-    echo "extra_link_args=['-L/usr/lib/x86_64-linux-gnu/']" | cat - setup.py > temp && mv temp setup.py &&\
     python3 setup.py bdist_wheel &&\
     pip3 install bdist/torch-1.0.0a0+${PYTORCH_COMMIT_ID}-cp35-cp35m-manylinux1_x86_64.whl
 
