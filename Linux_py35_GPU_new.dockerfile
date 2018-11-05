@@ -28,7 +28,7 @@ RUN apt-get -qq update && \
 
 RUN locale-gen en_US.UTF-8
 
-COPY ./default_locale /etc/default/locale
+#COPY ./default_locale /etc/default/locale
 RUN chmod 0755 /etc/default/locale
 
 ENV LC_ALL en_US.UTF-8
@@ -241,7 +241,7 @@ WORKDIR /
 COPY requirements.txt .
 
 # Requirements into the Python 3.5
-RUN bash -c pip3 install -r requirements.txt
+RUN pip3 install -r requirements.txt
 
 # CoreML converter and validation tools for models
 RUN git clone https://github.com/apple/coremltools.git && cd coremltools && pip3 install -v .
