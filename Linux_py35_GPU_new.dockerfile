@@ -181,7 +181,7 @@ RUN git clone https://github.com/pytorch/pytorch.git &&\
     cd pytorch && git checkout ${PYTORCH_COMMIT_ID} && \
     git submodule update --init --recursive &&\
     # pip3 install -r requirements.txt &&\
-    # pip3 install pyyaml &&\
+    pip3 install pyyaml &&\
     USE_OPENCV=1 \
     BUILD_TORCH=ON \
     CMAKE_PREFIX_PATH="/usr/bin/" \
