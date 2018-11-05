@@ -210,8 +210,11 @@ RUN git clone https://github.com/pytorch/pytorch.git &&\
     CXX=c++ \
     TORCH_CUDA_ARCH_LIST="3.5 5.2 6.0 6.1+PTX" \
     TORCH_NVCC_FLAGS="-Xfatbin -compress-all" \
-    python3 setup.py bdist_wheel &&\
-    pip3 install bdist/torch-1.0.0a0+${PYTORCH_COMMIT_ID}-cp35-cp35m-manylinux1_x86_64.whl
+    python3 setup.py bdist_wheel
+
+WORKDIR pytorch
+
+RUN pip3 install dist/torch-1.0.0a0+${PYTORCH_COMMIT_ID}-cp35-cp35m-manylinux1_x86_64.whl
 
 # TensorFlow-GPU, TensorFlow Object Detection API and Keras
 ENV PATH="/usr/local/protobuf-3.5.1/bin:${PATH}"
