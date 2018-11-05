@@ -194,7 +194,6 @@ RUN chmod -R 777 $PY_LIB_DIR
 RUN git clone https://github.com/pytorch/pytorch.git &&\
     cd pytorch && git checkout ${PYTORCH_COMMIT_ID} && \
     git submodule update --init --recursive &&\
-    # pip3 install -r requirements.txt &&\
     pip3 install pyyaml &&\
     USE_OPENCV=1 \
     BUILD_TORCH=ON \
@@ -215,13 +214,13 @@ RUN git clone https://github.com/pytorch/pytorch.git &&\
 
 # TensorFlow-GPU, TensorFlow Object Detection API and Keras
 ENV PATH="/usr/local/protobuf-3.5.1/bin:${PATH}"
-RUN bash -c pip3 install --upgrade Cython
-RUN bash -c pip3 install --upgrade tensorflow-gpu==${TENSORFLOW_VERSION}
-RUN bash -c pip3 install -e git+https://github.com/pdollar/coco.git#egg=pycocotools&subdirectory=PythonAPI
+RUN pip3 install --upgrade Cython
+RUN pip3 install --upgrade tensorflow-gpu==${TENSORFLOW_VERSION}
+RUN pip3 install -e git+https://github.com/pdollar/coco.git#egg=pycocotools&subdirectory=PythonAPI
 ARG DEBIAN_FRONTEND=noninteractive
 RUN export DEBIAN_FRONTEND="noninteractive" &&\
     apt-get update && apt-get install --yes protobuf-compiler python-pil python-lxml python-tk
-RUN bash -c pip3 install --upgrade jupyter matplotlib
+RUN pip3 install --upgrade jupyter matplotlib
 RUN mkdir -p /tensorflow
 WORKDIR /tensorflow/
 RUN git clone https://github.com/tensorflow/models.git
@@ -230,12 +229,12 @@ WORKDIR /tensorflow/models/research
 RUN cd /tensorflow/models/research &&\
     protoc object_detection/protos/*.proto --python_out=.
 RUN export PYTHONPATH=$PYTHONPATH:`pwd`:`pwd`/slim
-RUN bash -c pip3 install keras==${KERAS_VERSION}
+RUN pip3 install keras==${KERAS_VERSION}
 
 # CNTK and Custom Vision Service Python libraries
-RUN bash -c pip3 install cntk==${CNTK_VERSION}
-RUN bash -c pip3 install azure-cognitiveservices-vision-customvision==${AZURE_CVS_VERSION}
-RUN bash -c pip3 install azure-cognitiveservices-search-imagesearch==${AZURE_IMAGESEARCH_VERSION}
+RUN pip3 install cntk==${CNTK_VERSION}
+RUN pip3 install azure-cognitiveservices-vision-customvision==${AZURE_CVS_VERSION}
+RUN pip3 install azure-cognitiveservices-search-imagesearch==${AZURE_IMAGESEARCH_VERSION}
 
 WORKDIR /
 COPY requirements.txt .
@@ -271,10 +270,10 @@ RUN chown tpol /etc/jupyterhub
 
 # Create a default config to /etc/jupyterhub/jupyterhub_config.py
 RUN jupyterhub --generate-config -f /etc/jupyterhub/jupyterhub_config.py
-RUN bash -c echo c.PAMAuthenticator.open_sessions=False >> /etc/jupyterhub/jupyterhub_config.py
-RUN bash -c echo c.Authenticator.whitelist={'tpol'} >> /etc/jupyterhub/jupyterhub_config.py
-RUN bash -c echo c.LocalAuthenticator.create_system_users=True >> /etc/jupyterhub/jupyterhub_config.py
-RUN bash -c echo c.Authenticator.admin_users={'tpol'} >> /etc/jupyterhub/jupyterhub_config.py
+RUN echo c.PAMAuthenticator.open_sessions=False >> /etc/jupyterhub/jupyterhub_config.py
+RUN echo c.Authenticator.whitelist={'tpol'} >> /etc/jupyterhub/jupyterhub_config.py
+RUN echo c.LocalAuthenticator.create_system_users=True >> /etc/jupyterhub/jupyterhub_config.py
+RUN echo c.Authenticator.admin_users={'tpol'} >> /etc/jupyterhub/jupyterhub_config.py
 
 # Copy TLS certificate and key
 ENV SSL_CERT /etc/jupyterhub/secrets/mycert.pem
