@@ -18,8 +18,12 @@ ENV PYTORCH_COMMIT_ID="8619230"
 # # PyTorch Release 0.3.1
 # ENV PYTORCH_COMMIT_ID="2b47480"
 
-# Locale setting
-ENV LC_ALL=C
+# Set the locale
+RUN sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen && \
+    locale-gen
+ENV LANG en_US.UTF-8
+ENV LANGUAGE en_US:en
+ENV LC_ALL en_US.UTF-8
 
 # Install some essential packages
 RUN apt-get update && apt-get install -y \
@@ -94,7 +98,7 @@ RUN wget https://github.com/google/protobuf/releases/download/v3.5.1/protobuf-al
     export PATH=$PATH:`pwd`:`pwd`/bin
 
 # Install Python
-RUN apt-get update && LC_ALL=C apt-get install -y \
+RUN apt-get update && apt-get install -y \
     python3-dev \
     python3-numpy \
     python3-pip \
@@ -256,7 +260,7 @@ RUN chown tpol /etc/jupyterhub
 RUN chown tpol /etc/jupyterhub
 
 # Create a default config to /etc/jupyterhub/jupyterhub_config.py
-RUN LC_ALL=C jupyterhub --generate-config -f /etc/jupyterhub/jupyterhub_config.py
+RUN jupyterhub --generate-config -f /etc/jupyterhub/jupyterhub_config.py
 RUN bash -c echo c.PAMAuthenticator.open_sessions=False >> /etc/jupyterhub/jupyterhub_config.py
 RUN bash -c echo c.Authenticator.whitelist={'tpol'} >> /etc/jupyterhub/jupyterhub_config.py
 RUN bash -c echo c.LocalAuthenticator.create_system_users=True >> /etc/jupyterhub/jupyterhub_config.py
