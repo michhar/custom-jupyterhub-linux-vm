@@ -177,9 +177,10 @@ WORKDIR pytorch
 
 # This is the PyTorch requirements.txt
 RUN bash -c pip3 install -r requirements.txt
+RUN bash -c pip3 install pyyaml
 
 # Build PyTorch command
-RUN git checkout -b ${PYTORCH_VERSION} && USE_OPENCV=1 \
+RUN git checkout ${PYTORCH_VERSION} && USE_OPENCV=1 \
     BUILD_TORCH=ON \
     CMAKE_PREFIX_PATH="/usr/bin/" \
     LD_LIBRARY_PATH=/usr/local/cuda/lib64:/usr/local/lib:$LD_LIBRARY_PATH \
