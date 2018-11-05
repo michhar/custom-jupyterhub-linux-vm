@@ -5,7 +5,7 @@ LABEL maintainer "Micheleen Harris (contact michhar <at> microsoft.com)"
 
 # Vars for framework versions
 
-ENV TENSORFLOW_VERSION="1.12.0"
+ENV TENSORFLOW_VERSION="1.11.0"
 ENV CNTK_VERSION="2.6"
 ENV KERAS_VERSION="2.1.6"
 ENV TORCHVISION_VERSION="0.2.1"
@@ -210,7 +210,7 @@ RUN git clone https://github.com/pytorch/pytorch.git &&\
     TORCH_CUDA_ARCH_LIST="3.5 5.2 6.0 6.1+PTX" \
     TORCH_NVCC_FLAGS="-Xfatbin -compress-all" \
     python3 setup.py bdist_wheel &&\
-    bash -c pip3 install dist/torch-1.0.0a0+${PYTORCH_COMMIT_ID}-cp35-cp35m-manylinux1_x86_64.whl
+    pip3 install dist/torch-1.0.0a0+${PYTORCH_COMMIT_ID}-cp35-cp35m-manylinux1_x86_64.whl
 
 # TensorFlow-GPU, TensorFlow Object Detection API and Keras
 ENV PATH="/usr/local/protobuf-3.5.1/bin:${PATH}"
