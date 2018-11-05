@@ -12,6 +12,7 @@ ENV TORCHVISION_VERSION="0.2.1"
 ENV AZURE_CVS_VERSION="0.2.0"
 ENV AZURE_IMAGESEARCH_VERSION="1.0.0"
 ENV PYTORCH_VERSION="8619230"
+ENV PYTORCH_VERSION_FULL="1.0.0a0+8619230"
 
 # Locale setting
 ENV LC_ALL=C
@@ -89,7 +90,7 @@ RUN wget https://github.com/google/protobuf/releases/download/v3.5.1/protobuf-al
     export PATH=$PATH:`pwd`:`pwd`/bin
 
 # Install Python
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && LC_ALL=C apt-get install -y \
     python3-dev \
     python3-numpy \
     python3-pip \
@@ -191,12 +192,12 @@ ENV TORCH_CUDA_ARCH_LIST="3.5 5.2 6.0 6.1+PTX"
 ENV TORCH_NVCC_FLAGS="-Xfatbin -compress-all"
 
 # This is the PyTorch requirements.txt
-RUN LC_ALL=C python3 -m pip install -r requirements.txt
+RUN bash -c pip3 install -r requirements.txt
 
 # Build PyTorch command
 RUN git checkout ${PYTORCH_VERSION} && python3 setup.py bdist_wheel
 
-RUN LC_ALL=C python3 -m pip install dist/*.whl
+RUN bash -c pip3 install dist/torch-${PYTORCH_VERSION_FULL}-cp35-cp35m-manylinux1_x86_64.whl
 
 # TensorFlow-GPU, TensorFlow Object Detection API and Keras
 ENV PATH="/usr/local/protobuf-3.5.1/bin:${PATH}"
@@ -226,10 +227,10 @@ WORKDIR /
 COPY requirements.txt .
 
 # Requirements into the Python 3.5
-RUN LC_ALL=C python3 -m pip install -r requirements.txt
+RUN bash -c pip3 install -r requirements.txt
 
 # CoreML converter and validation tools for models
-RUN git clone https://github.com/apple/coremltools.git && cd coremltools && LC_ALL=C pip3 install -v .
+RUN git clone https://github.com/apple/coremltools.git && cd coremltools && pip3 install -v .
 
 RUN chmod -R 777 $PY_LIB_DIR
 
