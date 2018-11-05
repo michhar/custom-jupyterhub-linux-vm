@@ -171,16 +171,13 @@ USER root
 RUN chmod -R 777 $PY_LIB_DIR
 
 # Install PyTorch from source
-RUN git clone --recursive --depth 1 https://github.com/pytorch/pytorch.git
-
-WORKDIR pytorch
-
-# This is the PyTorch requirements.txt
-RUN bash -c pip3 install -r requirements.txt
-RUN bash -c pip3 install pyyaml
 
 # Build PyTorch command
-RUN cd pytorch && git checkout ${PYTORCH_VERSION} . && USE_OPENCV=1 \
+RUN git clone --recursive --depth 1 https://github.com/pytorch/pytorch.git &&\
+    cd pytorch && git checkout ${PYTORCH_VERSION} . && \
+    bash -c pip3 install -r requirements.txt &&\
+    bash -c pip3 install pyyaml &&\
+    USE_OPENCV=1 \
     BUILD_TORCH=ON \
     CMAKE_PREFIX_PATH="/usr/bin/" \
     LD_LIBRARY_PATH=/usr/local/cuda/lib64:/usr/local/lib:$LD_LIBRARY_PATH \
@@ -194,9 +191,8 @@ RUN cd pytorch && git checkout ${PYTORCH_VERSION} . && USE_OPENCV=1 \
     CXX=c++ \
     TORCH_CUDA_ARCH_LIST="3.5 5.2 6.0 6.1+PTX" \
     TORCH_NVCC_FLAGS="-Xfatbin -compress-all" \
-    python3 setup.py bdist_wheel
-
-RUN bash -c pip3 install dist/torch-${PYTORCH_VERSION_FULL}-cp35-cp35m-manylinux1_x86_64.whl
+    python3 setup.py bdist_wheel &&\
+    bash -c pip3 install dist/torch-${PYTORCH_VERSION_FULL}-cp35-cp35m-manylinux1_x86_64.whl
 
 # TensorFlow-GPU, TensorFlow Object Detection API and Keras
 ENV PATH="/usr/local/protobuf-3.5.1/bin:${PATH}"
