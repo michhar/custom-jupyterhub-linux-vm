@@ -20,6 +20,12 @@ ENV PYTORCH_COMMIT_ID="8619230"
 
 # Set the locale
 # Ensure that we always use UTF-8 and with US English locale
+
+RUN apt-get -qq update && \
+    apt-get -q -y upgrade && \
+    apt-get install -y sudo curl wget locales && \
+    rm -rf /var/lib/apt/lists/*
+
 RUN locale-gen en_US.UTF-8
 
 COPY ./default_locale /etc/default/locale
