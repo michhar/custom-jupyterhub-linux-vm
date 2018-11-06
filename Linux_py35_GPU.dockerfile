@@ -275,9 +275,9 @@ RUN chown tpol /etc/jupyterhub
 # Create a default config to /etc/jupyterhub/jupyterhub_config.py
 RUN jupyterhub --generate-config -f /etc/jupyterhub/jupyterhub_config.py
 RUN echo "c.PAMAuthenticator.open_sessions=False" >> /etc/jupyterhub/jupyterhub_config.py
-RUN echo "c.Authenticator.whitelist=\{\'tpol\'\}" >> /etc/jupyterhub/jupyterhub_config.py
+RUN echo "c.Authenticator.whitelist={'tpol'}" >> /etc/jupyterhub/jupyterhub_config.py
 RUN echo "c.LocalAuthenticator.create_system_users=True" >> /etc/jupyterhub/jupyterhub_config.py
-RUN echo "c.Authenticator.admin_users=\{\'tpol\'\}" >> /etc/jupyterhub/jupyterhub_config.py
+RUN echo "c.Authenticator.admin_users={'tpol'}" >> /etc/jupyterhub/jupyterhub_config.py
 
 # Copy TLS certificate and key
 ENV SSL_CERT /etc/jupyterhub/secrets/mycert.pem
@@ -295,4 +295,4 @@ RUN mkdir $USER_FILES_DIR &&\
 
 RUN cd /home
 
-CMD bash -c "jupyterhub -f /etc/jupyterhub/jupyterhub_config.py --JupyterHub.Authenticator.whitelist=\{\'tpol\',\'user1\',\'user2\',\'user3\',\'user4\'\} --JupyterHub.hub_ip='' --JupyterHub.ip='' JupyterHub.cookie_secret=bytes.fromhex\('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'\) Spawner.cmd=\['jupyterhub-singleuser'\] --ip '' --port 8788 --ssl-key /etc/jupyterhub/secrets/mykey.key --ssl-cert /etc/jupyterhub/secrets/mycert.pem"
+CMD bash -c "jupyterhub -f /etc/jupyterhub/jupyterhub_config.py --JupyterHub.Authenticator.whitelist={'tpol','user1','user2','user3','user4'} --JupyterHub.hub_ip='' --JupyterHub.ip='' JupyterHub.cookie_secret=bytes.fromhex('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx') Spawner.cmd=['jupyterhub-singleuser'] --ip '' --port 8788 --ssl-key /etc/jupyterhub/secrets/mykey.key --ssl-cert /etc/jupyterhub/secrets/mycert.pem"
