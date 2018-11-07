@@ -35,8 +35,6 @@ keyring==10.6.0
 Markdown==2.6.11
 MarkupSafe==1.0
 mistune==0.8.3
-msrest==0.4.25
-msrestazure==0.4.20
 nbconvert==5.3.1
 nbformat==4.4.0
 notebook==5.4.1
