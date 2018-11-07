@@ -95,5 +95,7 @@ azureml-sdk[notebooks]==0.1.68
 azure-cli==2.0.49
 azure-cognitiveservices-vision-customvision==0.3.0
 azure-cognitiveservices-search-imagesearch==1.0.0
+torchvision==0.2.1
+msrestazure==0.5.1
 
 

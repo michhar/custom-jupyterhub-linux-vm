@@ -188,6 +188,12 @@ USER root
 
 RUN chmod -R 777 $PY_LIB_DIR
 
+WORKDIR /
+COPY requirements.txt .
+
+# Requirements into the Python 3.5
+RUN pip3 install -r requirements.txt
+
 # Install PyTorch from source
 
 # Build PyTorch command
@@ -239,12 +245,6 @@ RUN pip3 install keras==${KERAS_VERSION}
 RUN pip3 install cntk==${CNTK_VERSION}
 RUN pip3 install azure-cognitiveservices-vision-customvision==${AZURE_CVS_VERSION}
 RUN pip3 install azure-cognitiveservices-search-imagesearch==${AZURE_IMAGESEARCH_VERSION}
-
-WORKDIR /
-COPY requirements.txt .
-
-# Requirements into the Python 3.5
-RUN pip3 install -r requirements.txt
 
 # CoreML converter and validation tools for models
 RUN git clone https://github.com/apple/coremltools.git && cd coremltools && pip3 install -v .
