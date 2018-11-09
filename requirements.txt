@@ -89,7 +89,7 @@ SimpleCV==1.3
 # milk==0.6.1
 imgaug==0.2.6
 azure==4.0.0
-azureml-sdk[notebooks]==0.1.68
+azureml-sdk[notebooks]==0.1.74
 azure-cli==2.0.49
 azure-cognitiveservices-vision-customvision==0.3.0
 azure-cognitiveservices-search-imagesearch==1.0.0
