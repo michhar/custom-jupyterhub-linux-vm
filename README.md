@@ -88,6 +88,8 @@ You can click on the "Deploy to Azure" button to try out the Ubuntu Data Science
 
 ### Deployment Options for Azure
 
+**NOTE**:  This are not functioning correctly right now.  Please deploy a DSVM and run one of the "local" commands above.  A fix is on the way.
+
 | Description | Deploy Here |
 | --- | --- |
 | CPU DSVM Version | <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmichhar%2Fcustom-azure-dsvm-jupyterhub%2Fmaster%2Fazuredeploy.json" target="_blank"><img src="http://azuredeploy.net/deploybutton.png"/>
