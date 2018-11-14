@@ -63,7 +63,7 @@ See the ARM template (`azuredeploy.json` and `azuredeploy.paramters.json`) for t
 
 ## Run Locally
 
-Run the docker image locally (**CPU-only**):
+Run the docker image locally:
 
 * Ensure you have Docker installed (Docker for Windows or Docker for Mac are recommended)
 * For CPU, run the following docker `run` command at a command prompt as follows (may need `sudo` to enhance priviledges on Unix systems) (for a command prompt in Windows, search for "cmd"):
