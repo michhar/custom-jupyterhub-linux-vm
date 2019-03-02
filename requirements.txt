@@ -3,7 +3,7 @@ adal==0.5.0
 asn1crypto==0.24.0
 astor==0.6.2
 bleach==1.5.0
-certifi==2017.11.5
+# certifi==2017.11.5
 cffi==1.11.2
 chardet==3.0.4
 click==6.7
@@ -88,12 +88,14 @@ SimpleCV==1.3
 # mahotas==1.4.4
 # milk==0.6.1
 imgaug==0.2.6
-azure==4.0.0
-azureml-sdk[notebooks]==0.1.74
-azure-cli==2.0.49
+# azure==4.0.0
+# azureml-sdk[notebooks]==0.1.74
+# azure-cli==2.0.49
+azureml-sdk[notebooks,automl]
 azure-cognitiveservices-vision-customvision==0.3.0
 azure-cognitiveservices-search-imagesearch==1.0.0
-torchvision==0.2.1
+# torchvision==0.2.1
 msrestazure==0.5.1
+torch==1.0
 
 

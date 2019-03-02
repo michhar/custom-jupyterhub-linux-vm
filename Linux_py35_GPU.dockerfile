@@ -72,6 +72,20 @@ RUN apt-get update && apt-get install -y \
     libffi-dev &&\
     rm -rf /var/lib/apt/lists/*
 
+# For Azure CLI
+
+RUN apt-get update && apt-get install apt-transport-https lsb-release software-properties-common dirmngr -y
+
+RUN echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ $(lsb_release -cs) main" | \
+    tee /etc/apt/sources.list.d/azure-cli.list
+
+RUN apt-key --keyring /etc/apt/trusted.gpg.d/Microsoft.gpg adv \
+     --keyserver packages.microsoft.com \
+     --recv-keys BC528686B50D79E339D3721CEB3E94ADBE1229CF && \
+     apt-get update && \
+     apt-get install azure-cli
+
+
 # Nodejs v11 because current apt-get has v4
 RUN curl -sL https://deb.nodesource.com/setup_11.x | sudo -E bash -
 RUN sudo apt-get install -y nodejs
@@ -197,9 +211,8 @@ RUN pip3 install -r requirements.txt
 # Install PyTorch from source
 
 # Build PyTorch command
-RUN git clone https://github.com/pytorch/pytorch.git &&\
-    cd pytorch && git checkout ${PYTORCH_COMMIT_ID} && \
-    git submodule update --init --recursive  &&\
+RUN git clone --recursive https://github.com/pytorch/pytorch.git &&\
+    pip3 uninstall torch &&\
     pip3 install pyyaml==3.13 &&\
     pip3 install -r requirements.txt &&\
     USE_OPENCV=1 \
@@ -220,6 +233,7 @@ RUN git clone https://github.com/pytorch/pytorch.git &&\
 
 WORKDIR pytorch
 
+# Install PyTorch wheel (includes PyTorch C++ API)
 RUN pip3 install dist/*.whl
 
 # TensorFlow-GPU, TensorFlow Object Detection API and Keras

@@ -16,11 +16,11 @@
 FROM nvidia/cuda:9.0-cudnn7-devel-ubuntu16.04
 
 LABEL maintainer "Micheleen Harris (contact michhar <at> microsoft.com)"
-ENV TENSORFLOW_VERSION="1.6.0"
+ENV TENSORFLOW_VERSION="1.10.0"
 ENV CNTK_VERSION="2.5"
-ENV KERAS_VERSION="2.1.4"
-ENV PYTORCH_VERSION="0.3.1"
-ENV TORCHVISION_VERION="0.2.0"
+ENV KERAS_VERSION="2.2.4"
+ENV PYTORCH_VERSION="1.0"
+ENV TORCHVISION_VERION="0.2.1"
 
 RUN apt-get update && apt-get install -y \
     apt-transport-https \
@@ -70,6 +70,19 @@ RUN apt-get update && apt-get install -y \
     bzip2 \
     # For TF Object Detection API
     protobuf-compiler python-pil python-lxml python-tk
+
+# For Azure CLI
+
+RUN apt-get update && apt-get install apt-transport-https lsb-release software-properties-common dirmngr -y
+
+RUN echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ $(lsb_release -cs) main" | \
+    tee /etc/apt/sources.list.d/azure-cli.list
+
+RUN apt-key --keyring /etc/apt/trusted.gpg.d/Microsoft.gpg adv \
+     --keyserver packages.microsoft.com \
+     --recv-keys BC528686B50D79E339D3721CEB3E94ADBE1229CF && \
+     apt-get update && \
+     apt-get install azure-cli
 
 # # Cython for TF Object Detection API - Cython
 # RUN apt-get update && apt-get install -y python3-pip && \
@@ -243,7 +256,6 @@ RUN CMAKE_PREFIX_PATH="/user/miniconda3/envs/py35/" && \
 
 # Requirements into the Python 3.5
 RUN bash -c 'source /user/miniconda3/bin/activate py35 && pip install -r requirements.txt'
-RUN bash -c 'source /user/miniconda3/bin/activate py35 && pip install -r cli-requirements.txt'
 
 # Other useful computer vision related libraries - moved to requirements file
 
