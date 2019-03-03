@@ -16,8 +16,7 @@
 FROM nvidia/cuda:9.0-cudnn7-devel-ubuntu16.04
 
 LABEL maintainer "Micheleen Harris (contact michhar <at> microsoft.com)"
-ENV TENSORFLOW_VERSION="1.10.0"
-ENV CNTK_VERSION="2.5"
+ENV TENSORFLOW_VERSION="1.12.0"
 ENV KERAS_VERSION="2.2.4"
 ENV PYTORCH_VERSION="1.0"
 ENV TORCHVISION_VERION="0.2.1"
@@ -125,21 +124,6 @@ RUN wget https://github.com/google/protobuf/releases/download/v3.5.1/protobuf-al
     make -j $(nproc) && \
     make install
 
-# # Boost (for CNTK) - skipping for now
-# RUN wget https://sourceforge.net/projects/boost/files/boost/1.67.0/boost_1_67_0.tar.gz/download && \
-#     tar -xzf - && \
-#     cd boost_1_67_0 && \
-#     ./bootstrap.sh --prefix=/usr/local/boost_1_67_0 && \
-#     ./b2 -d0 -j"$(nproc)" install
-
-# # Libzip (for CNTK) - skipping for now
-# RUN wget http://nih.at/libzip/libzip-1.1.2.tar.gz && \
-#     tar -xzvf ./libzip-1.1.2.tar.gz && \
-#     cd libzip-1.1.2 && \
-#     ./configure && \
-#     make -j all && \
-#     make install
-
 # Add admin user (other users can be made admins of jupyterhub from this user)
 ARG USER_PW
 RUN USER_PW=$USER_PW
@@ -235,29 +219,24 @@ RUN chmod -R 777 $CONDA_DIR && \
 ENV NB_USER=wonderwoman
 USER $NB_USER
 
+USER root
+
+# To install new kernels
+RUN $CONDA_DIR/bin/pip install ipykernel
+
 # Create the conda environment
-RUN $CONDA_DIR/bin/conda create -n py35 python=3.5.2 ipykernel
+RUN $CONDA_DIR/bin/conda create -n py352 python=3.5.2 ipykernel
 
 # Tensorflow and Keras
-RUN bash -c 'source /user/miniconda3/bin/activate py35 && pip install tensorflow==${TENSORFLOW_VERSION}'
-RUN bash -c 'source /user/miniconda3/bin/activate py35 && pip install keras==${KERAS_VERSION}'
-
-# CNTK and Custom Vision Service Python libraries
-RUN bash -c 'source /user/miniconda3/bin/activate py35 && pip install cntk==${CNTK_VERSION}'
-
+RUN $CONDA_DIR/envs/py352/bin/pip install tensorflow==${TENSORFLOW_VERSION}
+RUN $CONDA_DIR/envs/py352/bin/pip install keras==${KERAS_VERSION}
 
 # PyTorch
-WORKDIR /opt/pytorch
-COPY . .
+RUN $CONDA_DIR/envs/py352/bin/pip install torch==${PYTORCH_VERSION} torchvision==${TORCHVISION_VERSION}
 
-RUN CMAKE_PREFIX_PATH="/user/miniconda3/envs/py35/" && \
-    bash -c 'source /user/miniconda3/bin/activate py35 && conda install numpy pyyaml mkl mkl-include setuptools cmake cffi typing' && \
-    bash -c 'source /user/miniconda3/bin/activate py35 && conda install --yes pytorch==${PYTORCH_VERSION} torchvision -c pytorch'
-
-# Requirements into the Python 3.5
-RUN bash -c 'source /user/miniconda3/bin/activate py35 && pip install -r requirements.txt'
-
-# Other useful computer vision related libraries - moved to requirements file
+# Requirements into the Python 3.5.2 - other useful computer vision related libs
+COPY requirements.txt .
+RUN $CONDA_DIR/envs/py352/bin/pip install -r requirements.txt
 
 # # TF Object Detection API - wip
 # RUN bash -c 'source /user/miniconda3/bin/activate py36 && pip install Cython'
@@ -268,33 +247,35 @@ RUN $CONDA_DIR/bin/conda create -n py35_tfp python=3.5.2 ipykernel
 # Installing a Probability lib into Conda env py35_tfp:
 # Tensorflow Probability (https://github.com/tensorflow/probability) - experimental (in its own conda env)
 # - depends on a nightly build of TensorFlow
-RUN bash -c 'source /user/miniconda3/bin/activate py35_tfp && pip install --upgrade tf-nightly'
-RUN bash -c 'source /user/miniconda3/bin/activate py35_tfp && pip install --upgrade tfp-nightly'
-
-
-USER root
+RUN $CONDA_DIR/envs/py35_tfp/bin/pip install tensorflow==${TENSORFLOW_VERSION}
+RUN $CONDA_DIR/envs/py35_tfp/bin/pip install --upgrade tensorflow-probability
 
 # CoreML converter and validation tools for models
-RUN bash -c 'source /user/miniconda3/bin/activate py35 && git clone https://github.com/apple/coremltools.git && cd coremltools && pip install -v .'
+RUN git clone https://github.com/apple/coremltools.git && cd coremltools && $CONDA_DIR/envs/py352/bin/pip install -v .
 
-# # Add the py35 kernel to Jupyter
-# RUN bash -c 'source /user/miniconda3/bin/activate py35 && python -m ipykernel install --name py35 --display-name "Python 3.5.2"'
+# Add the Pythons (TensorFlow Probability) kernel to Jupyter
+RUN $CONDA_DIR/envs/py352/bin/python -m ipykernel install --name py352 --display-name "Python 3.5.2 Custom"
+RUN $CONDA_DIR/envs/py35_tfp/bin/python -m ipykernel install --name py35_tfp --display-name "Python 3.5 TFP"
 
-# Add the py35_tfp (TensorFlow Probability) kernel to Jupyter
-RUN bash -c 'source /user/miniconda3/bin/activate py35_tfp && python -m ipykernel install --name py35_tfp --display-name "Python 3.5 TFP"'
-
-# # Torchvision - this is the development release install path; installing as root due to git
-# RUN bash -c 'source /user/miniconda3/bin/activate py36 && git clone https://github.com/pytorch/vision.git && cd vision && pip install -v .'
+# Configure jupyter nbextensions (needed as in https://github.com/jupyter-widgets/ipywidgets/issues/1702#issuecomment-332392774)
+RUN $CONDA_DIR/bin/pip install jupyter jupyterhub notebook pyzmq
+RUN $CONDA_DIR/bin/conda install -c conda-forge jupyter_contrib_nbextensions ipywidgets
+RUN $CONDA_DIR/bin/jupyter contrib nbextension install --sys-prefix
+RUN $CONDA_DIR/bin/jupyter nbextension enable --py --sys-prefix widgetsnbextension
 
 ### Conda folder permissions ###
-# - must do as root, but gives permission so can pip install etc. 
+# - must do as root, but gives permission so can pip install etc.
+USER root
+
 RUN chmod -R 777 $CONDA_DIR
 
 ### Jupyterhub setup ###
 
-# Additional installs
-RUN apt-get install nodejs npm
-RUN ln -s /usr/bin/nodejs /usr/bin/node
+# Additional configuring
+# Using Ubuntu
+RUN curl -sL https://deb.nodesource.com/setup_11.x | sudo -E bash - &&\
+    sudo apt-get install -y nodejs
+
 RUN npm install -g configurable-http-proxy
 
 # Create directories
@@ -314,11 +295,11 @@ RUN chown wonderwoman /etc/jupyterhub
 RUN chown wonderwoman /etc/jupyterhub
 
 # Create a default config to /etc/jupyterhub/jupyterhub_config.py
-RUN bash -c 'source /user/miniconda3/bin/activate py35 && jupyterhub --generate-config -f /etc/jupyterhub/jupyterhub_config.py'
-RUN bash -c 'source /user/miniconda3/bin/activate py35 && echo c.PAMAuthenticator.open_sessions=False >> /etc/jupyterhub/jupyterhub_config.py'
-RUN bash -c "source /user/miniconda3/bin/activate py35 && echo c.Authenticator.whitelist={\'wonderwoman\'} >> /etc/jupyterhub/jupyterhub_config.py"
-RUN bash -c "source /user/miniconda3/bin/activate py35 && echo c.LocalAuthenticator.create_system_users=True >> /etc/jupyterhub/jupyterhub_config.py"
-RUN bash -c "source /user/miniconda3/bin/activate py35 && echo c.Authenticator.admin_users={\'wonderwoman\'} >> /etc/jupyterhub/jupyterhub_config.py"
+RUN jupyterhub --generate-config -f /etc/jupyterhub/jupyterhub_config.py
+RUN echo "c.PAMAuthenticator.open_sessions=False" >> /etc/jupyterhub/jupyterhub_config.py
+RUN echo "c.Authenticator.whitelist={'wonderwoman'}" >> /etc/jupyterhub/jupyterhub_config.py
+RUN echo "c.LocalAuthenticator.create_system_users=True" >> /etc/jupyterhub/jupyterhub_config.py
+RUN echo "c.Authenticator.admin_users={'wonderwoman'}" >> /etc/jupyterhub/jupyterhub_config.py
 
 # Copy TLS certificate and key
 ENV SSL_CERT /etc/jupyterhub/secrets/mycert.pem
@@ -328,9 +309,12 @@ COPY ./secrets/*.key $SSL_KEY
 RUN chmod 700 /etc/jupyterhub/secrets && \
     chmod 600 /etc/jupyterhub/secrets/*
 
-# For CNTK (libpython3.6-dev needed) if using Pythohn 3.6
-# RUN add-apt-repository ppa:jonathonf/python-3.6 && apt-get update && apt-get install -y libpython3.6-dev
+# Creating a file directory for files to spawn to all users - testing this
+# c.Spawner.notebook_dir = '~/files' # could be a good place to place tf models
+ENV USER_FILES_DIR /etc/jupyterhub/files
+RUN mkdir $USER_FILES_DIR &&\
+    cd $USER_FILES_DIR
 
 RUN cd /home
 
-CMD bash -c "source /user/miniconda3/bin/activate py35 && jupyterhub -f /etc/jupyterhub/jupyterhub_config.py --JupyterHub.Authenticator.whitelist=\{\'user1\',\'user2\',\'user3\',\'user4\'\} --JupyterHub.hub_ip='' --JupyterHub.ip='' JupyterHub.cookie_secret=bytes.fromhex\('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'\) Spawner.cmd=\['/user/miniconda3/bin/jupyterhub-singleuser'\] --ip '' --port 8788 --ssl-key /etc/jupyterhub/secrets/mykey.key --ssl-cert /etc/jupyterhub/secrets/mycert.pem"
+CMD bash -c "jupyterhub -f /etc/jupyterhub/jupyterhub_config.py --JupyterHub.Authenticator.whitelist=\{\'wonderwoman\',\'user1\',\'user2\',\'user3\',\'user4\'\} --JupyterHub.hub_ip='' --JupyterHub.ip='' JupyterHub.cookie_secret=bytes.fromhex\('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'\) Spawner.cmd=\['jupyterhub-singleuser'\] --ip '' --port 8788 --ssl-key /etc/jupyterhub/secrets/mykey.key --ssl-cert /etc/jupyterhub/secrets/mycert.pem"

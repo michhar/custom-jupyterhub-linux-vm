@@ -5,17 +5,12 @@ LABEL maintainer "Micheleen Harris (contact michhar <at> microsoft.com)"
 
 # Vars for framework versions
 
-ENV TENSORFLOW_VERSION="1.11.0"
-ENV CNTK_VERSION="2.6"
-ENV KERAS_VERSION="2.1.6"
-ENV TORCHVISION_VERSION="0.2.1"
-ENV AZURE_CVS_VERSION="0.2.0"
-ENV AZURE_IMAGESEARCH_VERSION="1.0.0"
+ENV TENSORFLOW_VERSION="1.12.0"
+ENV KERAS_VERSION="2.2.4"
+ENV PYTORCH_VERSION="1.0"
+ENV TORCHVISION_VERION="0.2.1"
 
-# PyTorch post-1.0rc1 (C++ module issue in 1.0rc1)
-ENV PYTORCH_COMMIT_ID="8619230"
-
-# # PyTorch Release 0.3.1
+# # PyTorch Release 0.3.1 if needed
 # ENV PYTORCH_COMMIT_ID="2b47480"
 
 # Set the locale
@@ -140,7 +135,7 @@ RUN USER_PW=$USER_PW
 # Configure environment
 ENV PY_LIB_DIR=/usr/lib/python3.5 \
     SHELL=/bin/bash \
-    NB_USER=tpol \
+    NB_USER=wonderwoman \
     NB_UID=1000 \
     NB_GID=100 \
     LC_ALL=en_US.UTF-8 \
@@ -157,7 +152,7 @@ RUN useradd -u $NB_UID -m -s /bin/bash -N $NB_USER && \
     chown $NB_USER:$NB_GID $PY_LIB_DIR && \
     chmod g+w /etc/passwd /etc/group && \
     chmod -R 777 $HOME/$NB_USER
-RUN printf "${USER_PW}\n${USER_PW}" | passwd tpol
+RUN printf "${USER_PW}\n${USER_PW}" | passwd wonderwoman
 
 ENV NB_USER=user1
 RUN useradd -m -s /bin/bash -N $NB_USER && \
@@ -191,7 +186,7 @@ RUN useradd -m -s /bin/bash -N $NB_USER && \
     chmod -R 777 $HOME/$NB_USER
 RUN printf "${USER_PW}\n${USER_PW}" | passwd $NB_USER
 
-ENV NB_USER=tpol
+ENV NB_USER=wonderwoman
 USER $NB_USER
 
 # Setup work directory for backward-compatibility
@@ -208,38 +203,43 @@ COPY requirements.txt .
 # Requirements into the Python 3.5
 RUN pip3 install -r requirements.txt
 
-# Install PyTorch from source
+# Install PyTorch with pip (installs with GPU support automagically)
 
-# Build PyTorch command
-RUN git clone --recursive https://github.com/pytorch/pytorch.git &&\
-    pip3 uninstall torch &&\
-    pip3 install pyyaml==3.13 &&\
-    pip3 install -r requirements.txt &&\
-    USE_OPENCV=1 \
-    BUILD_TORCH=ON \
-    CMAKE_PREFIX_PATH="/usr/bin/" \
-    LD_LIBRARY_PATH=/usr/local/cuda/lib64:/usr/local/lib:/usr/lib/x86_64-linux-gnu/:$LD_LIBRARY_PATH \
-    CUDA_BIN_PATH=/usr/local/cuda/bin \
-    CUDA_TOOLKIT_ROOT_DIR=/usr/local/cuda/ \
-    CUDNN_LIB_DIR=/usr/local/cuda/lib64 \
-    CUDA_HOST_COMPILER=cc \
-    USE_CUDA=1 \
-    USE_NNPACK=1 \
-    CC=cc \
-    CXX=c++ \
-    TORCH_CUDA_ARCH_LIST="3.5 5.2 6.0 6.1+PTX" \
-    TORCH_NVCC_FLAGS="-Xfatbin -compress-all" \
-    python3 setup.py bdist_wheel
+RUN pip3 install torch==${PYTORCH_VERSION} torchvision==${TORCHVISION_VERSION}
 
-WORKDIR pytorch
+# # Install PyTorch from source (keeps just in case) - developers have all the fun!
 
-# Install PyTorch wheel (includes PyTorch C++ API)
-RUN pip3 install dist/*.whl
+# # Build PyTorch command
+# RUN git clone --recursive https://github.com/pytorch/pytorch.git &&\
+#     pip3 uninstall torch &&\
+#     pip3 install pyyaml==3.13 &&\
+#     pip3 install -r requirements.txt &&\
+#     USE_OPENCV=1 \
+#     BUILD_TORCH=ON \
+#     CMAKE_PREFIX_PATH="/usr/bin/" \
+#     LD_LIBRARY_PATH=/usr/local/cuda/lib64:/usr/local/lib:/usr/lib/x86_64-linux-gnu/:$LD_LIBRARY_PATH \
+#     CUDA_BIN_PATH=/usr/local/cuda/bin \
+#     CUDA_TOOLKIT_ROOT_DIR=/usr/local/cuda/ \
+#     CUDNN_LIB_DIR=/usr/local/cuda/lib64 \
+#     CUDA_HOST_COMPILER=cc \
+#     USE_CUDA=1 \
+#     USE_NNPACK=1 \
+#     CC=cc \
+#     CXX=c++ \
+#     TORCH_CUDA_ARCH_LIST="3.5 5.2 6.0 6.1+PTX" \
+#     TORCH_NVCC_FLAGS="-Xfatbin -compress-all" \
+#     python3 setup.py bdist_wheel
 
-# TensorFlow-GPU, TensorFlow Object Detection API and Keras
+# WORKDIR pytorch
+
+# # Install PyTorch wheel (includes PyTorch C++ API)
+# RUN pip3 install dist/*.whl
+
+# TensorFlow-GPU, TensorFlow Object Detection API, Keras and TensorFlow Probability
 ENV PATH="/usr/local/protobuf-3.5.1/bin:${PATH}"
 RUN pip3 install --upgrade Cython
 RUN pip3 install --upgrade tensorflow-gpu==${TENSORFLOW_VERSION}
+RUN pip3 install --upgrade tensorflow-probability
 RUN pip3 install -e git+https://github.com/pdollar/coco.git#egg=pycocotools&subdirectory=PythonAPI
 ARG DEBIAN_FRONTEND=noninteractive
 RUN export DEBIAN_FRONTEND="noninteractive" &&\
@@ -255,11 +255,6 @@ RUN cd /tensorflow/models/research &&\
 RUN export PYTHONPATH=$PYTHONPATH:`pwd`:`pwd`/slim
 RUN pip3 install keras==${KERAS_VERSION}
 
-# CNTK and Custom Vision Service Python libraries
-RUN pip3 install cntk==${CNTK_VERSION}
-RUN pip3 install azure-cognitiveservices-vision-customvision==${AZURE_CVS_VERSION}
-RUN pip3 install azure-cognitiveservices-search-imagesearch==${AZURE_IMAGESEARCH_VERSION}
-
 # CoreML converter and validation tools for models
 RUN git clone https://github.com/apple/coremltools.git && cd coremltools && pip3 install -v .
 
@@ -268,6 +263,10 @@ RUN chmod -R 777 $PY_LIB_DIR
 ### Jupyterhub setup ###
 
 # Additional configuring
+# Using Ubuntu
+RUN curl -sL https://deb.nodesource.com/setup_11.x | sudo -E bash - &&\
+    sudo apt-get install -y nodejs
+
 RUN npm install -g configurable-http-proxy
 
 # Create directories
@@ -278,20 +277,20 @@ RUN mkdir -p /etc/jupyterhub
 RUN chmod +x /etc/jupyterhub
 
 # Deal with directory permissions for user and add to userlist
-RUN mkdir -p /hub/user/tpol/
-RUN chown tpol /hub/user/tpol/
-RUN mkdir -p /user/tpol/
-RUN chown tpol /user/tpol/
-RUN echo "tpol admin" >> /etc/jupyterhub/userlist
-RUN chown tpol /etc/jupyterhub
-RUN chown tpol /etc/jupyterhub
+RUN mkdir -p /hub/user/wonderwoman/
+RUN chown wonderwoman /hub/user/wonderwoman/
+RUN mkdir -p /user/wonderwoman/
+RUN chown wonderwoman /user/wonderwoman/
+RUN echo "wonderwoman admin" >> /etc/jupyterhub/userlist
+RUN chown wonderwoman /etc/jupyterhub
+RUN chown wonderwoman /etc/jupyterhub
 
 # Create a default config to /etc/jupyterhub/jupyterhub_config.py
 RUN jupyterhub --generate-config -f /etc/jupyterhub/jupyterhub_config.py
 RUN echo "c.PAMAuthenticator.open_sessions=False" >> /etc/jupyterhub/jupyterhub_config.py
-RUN echo "c.Authenticator.whitelist={'tpol'}" >> /etc/jupyterhub/jupyterhub_config.py
+RUN echo "c.Authenticator.whitelist={'wonderwoman'}" >> /etc/jupyterhub/jupyterhub_config.py
 RUN echo "c.LocalAuthenticator.create_system_users=True" >> /etc/jupyterhub/jupyterhub_config.py
-RUN echo "c.Authenticator.admin_users={'tpol'}" >> /etc/jupyterhub/jupyterhub_config.py
+RUN echo "c.Authenticator.admin_users={'wonderwoman'}" >> /etc/jupyterhub/jupyterhub_config.py
 
 # Copy TLS certificate and key
 ENV SSL_CERT /etc/jupyterhub/secrets/mycert.pem
@@ -309,4 +308,4 @@ RUN mkdir $USER_FILES_DIR &&\
 
 RUN cd /home
 
-CMD bash -c "jupyterhub -f /etc/jupyterhub/jupyterhub_config.py --JupyterHub.Authenticator.whitelist=\{\'tpol\',\'user1\',\'user2\',\'user3\',\'user4\'\} --JupyterHub.hub_ip='' --JupyterHub.ip='' JupyterHub.cookie_secret=bytes.fromhex\('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'\) Spawner.cmd=\['jupyterhub-singleuser'\] --ip '' --port 8788 --ssl-key /etc/jupyterhub/secrets/mykey.key --ssl-cert /etc/jupyterhub/secrets/mycert.pem"
+CMD bash -c "jupyterhub -f /etc/jupyterhub/jupyterhub_config.py --JupyterHub.Authenticator.whitelist=\{\'wonderwoman\',\'user1\',\'user2\',\'user3\',\'user4\'\} --JupyterHub.hub_ip='' --JupyterHub.ip='' JupyterHub.cookie_secret=bytes.fromhex\('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'\) Spawner.cmd=\['jupyterhub-singleuser'\] --ip '' --port 8788 --ssl-key /etc/jupyterhub/secrets/mykey.key --ssl-cert /etc/jupyterhub/secrets/mycert.pem"

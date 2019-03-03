@@ -18,48 +18,39 @@ The Cloud Deployment runs on top of Azure's Ubuntu Data Science Virtual Machine 
 
 Deep Learning:
 
-* TensorFlow 1.12.0 (including Object Detection API)
-* PyTorch 0.4.1 or 1.0
-* Torchvision 0.2.1
-* CNTK 2.6
-* Keras 2.1.6
+* TENSORFLOW_VERSION="1.12.0"
+* KERAS_VERSION="2.2.4"
+* PYTORCH_VERSION="1.0"
+* TORCHVISION_VERION="0.2.1"
 
 Azure:
 
-* Azure CLI 2.0.22
-* Azure ML Python SDK 0.1.68
-* Azure Image Search SDK 1.0.0
-* Azure Custom Vision Python SDK 0.3.0
+* Azure CLI
+* Azure ML Python SDK
+* Azure Image Search Python SDK
+* Azure Custom Vision Python SDK
 
 Computer Vision Related:
 
-* OpenCV - opencv-python==3.4.3.18
-* Scikit-Image - scikit-image==0.13.1
-* Imaged Augmentation Library - imgaug==0.2.6
-* Shapely for spatial analysis ([Ref](http://shapely.readthedocs.io/en/stable/manual.html)) - Shapely==1.6
-* SimpleCV ([Ref](http://simplecv.readthedocs.io/en/1.0/)); can even hook up to webcam etc. - ([Ref](http://simplecv.readthedocs.io/en/1.0/cookbook/#using-a-camera-kinect-or-virtualcamera)) - SimpleCV==1.3
-* Dask for external memory bound computation (e.g. digit classification [here](https://github.com/michhar/python-jupyter-notebooks/blob/master/dask/dask-digit-classification.ipynb)) - dask==0.17.2
+* OpenCV
+* Scikit-Image
+* Imaged Augmentation Library - imgaug
+* Shapely for spatial analysis ([Ref](http://shapely.readthedocs.io/en/stable/manual.html))
+* SimpleCV ([Ref](http://simplecv.readthedocs.io/en/1.0/)); can even hook up to webcam etc. - ([Ref](http://simplecv.readthedocs.io/en/1.0/cookbook/#using-a-camera-kinect-or-virtualcamera))
+* Dask for external memory bound computation (e.g. digit classification [here](https://github.com/michhar/python-jupyter-notebooks/blob/master/dask/dask-digit-classification.ipynb))
+* and more (see `requirements.txt`)
 
 Other:
 
-* JupyterHub 0.9.4
-
-### Python 3.5 TFP - For Experimenting with Probability Library in TensorFlow
-
-"Python 3.5.2 TFP" (kernel name)
-
-* TensorFlow Probability and TensorFlow nightly build
+* JupyterHub for interacting with these components
+* TensorFlow Probability
 
 ### Users Set Up on VM
 
-* **5 users**:  tpol, user1, user2, user3, user4
+* **5 users**:  wonderwoman, user1, user2, user3, user4
 * Password is the one used to build the image.  The default is **"Python3!"**.
 
 See the ARM template (`azuredeploy.json` and `azuredeploy.paramters.json`) for the specs on deploying to Azure.
-
-### Data
-
-* None yet
 
 ## Run Locally
 
@@ -78,7 +69,7 @@ Run the docker image locally:
 
 ### JupyterHub Login
 
-* Log into JupyterHub at https://0.0.0.0:8788 or https://localhost:8788 (note the use of `https`) with the user `tpol` and the system variable password you used when building it (the default specified above) and you should also get an Admin panel to make users Admin as well so they can pip install stuff.
+* Log into JupyterHub at https://0.0.0.0:8788 or https://localhost:8788 (note the use of `https`) with the user `wonderwoman` and the system variable password you used when building it (the default specified above) and you should also get an Admin panel to make users Admin as well so they can pip install stuff.
 
 ## Azure Cloud Deployment
 
@@ -87,8 +78,6 @@ You can click on the "Deploy to Azure" button to try out the Ubuntu Data Science
 **IMPORTANT NOTE**: Before you proceed to use the **Deploy to Azure** button you must perform a one-time task to accept the terms of the data science virtual machine on your Azure subscription. You can do this by visiting [Configure Programmatic Deployment](https://ms.portal.azure.com/#blade/Microsoft_Azure_Marketplace/LegalTermsSkuProgrammaticAccessBlade/legalTermsSkuProgrammaticAccessData/%7B%22product%22%3A%7B%22publisherId%22%3A%22microsoft-ads%22%2C%22offerId%22%3A%22linux-data-science-vm%22%2C%22planId%22%3A%22linuxdsvm%22%7D%7D)
 
 ### Deployment Options for Azure
-
-**NOTE**:  This are not functioning correctly right now.  Please deploy a DSVM and run one of the "local" commands above.  A fix is on the way.
 
 | Description | Deploy Here |
 | --- | --- |
@@ -101,7 +90,7 @@ You can click on the "Deploy to Azure" button to try out the Ubuntu Data Science
 
 ### JupyterHub Login
 
-* Log into jupyterhub at `https://<ip or dns name>:8788` (note the use of `https` and port `8788`) with the user `tpol` and the system variable password you used when building it (the default specified above) and you should also get an Admin panel to make the other users Admin as well so they can pip install stuff.
+* Log into jupyterhub at `https://<ip or dns name>:8788` (note the use of `https` and port `8788`) with the user `wonderwoman` and the system variable password you used when building it (the default specified above) and you should also get an Admin panel to make the other users Admin as well so they can pip install stuff.
 * Note, the DSVM already has a JupyterHub system running at port `8000` if interested.  Check out Azure Portal or Azure Docs for more information on what it contains.
 
 ## To Build the Docker Image Yourself
