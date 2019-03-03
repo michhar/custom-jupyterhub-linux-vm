@@ -116,17 +116,28 @@ RUN wget https://github.com/google/protobuf/releases/download/v3.5.1/protobuf-al
     cd .. &&\
     export PATH=$PATH:`pwd`:`pwd`/bin
 
-# Install Python
-RUN apt-get update && apt-get install -y \
-    python3-dev \
-    python3-numpy \
-    python3-pip \
-    python3-py \
-    python3-pytest \
-    python3-setuptools \
-    && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+# Install Python 3.6
+RUN apt-get install software-properties-common &&\
+    add-apt-repository -y ppa:deadsnakes/ppa &&\
+    apt-get update &&\
+    apt-get install -y python3.6 &&\
+    curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && \
+    python3.6 get-pip.py
+
+RUN alias python3=python3.6 &&\
+    alias pip3=pip3.6
+
+# # Old Python install
+# RUN apt-get update && apt-get install -y \
+#     python3-dev \
+#     python3-numpy \
+#     python3-pip \
+#     python3-py \
+#     python3-pytest \
+#     python3-setuptools \
+#     && \
+#     apt-get clean && \
+#     rm -rf /var/lib/apt/lists/*
 
 # Add admin user (other users can be made admins of jupyterhub from this user)
 ARG USER_PW
@@ -260,7 +271,7 @@ RUN git clone https://github.com/apple/coremltools.git && cd coremltools && pip3
 
 # Add Kernel to use in future juypyter notebooks
 RUN pip3 install ipykernel
-RUN python3 -m ipykernel install --name py35 --display-name "Python 3.5 Custom"
+RUN python3 -m ipykernel install --name py35_custom --display-name "Python 3.5 Custom"
 
 # Configure jupyter nbextensions (needed as in https://github.com/jupyter-widgets/ipywidgets/issues/1702#issuecomment-332392774)
 RUN pip3 install jupyter jupyterhub notebook pyzmq
@@ -273,10 +284,6 @@ RUN chmod -R 777 $PY_LIB_DIR
 ### Jupyterhub setup ###
 
 # Additional configuring
-# Using Ubuntu
-RUN curl -sL https://deb.nodesource.com/setup_11.x | sudo -E bash - &&\
-    sudo apt-get install -y nodejs
-
 RUN npm install -g configurable-http-proxy
 
 # Create directories
