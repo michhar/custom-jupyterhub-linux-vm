@@ -264,6 +264,10 @@ RUN pip3 install jupyter_contrib_nbextensions ipywidgets
 RUN jupyter contrib nbextension install --sys-prefix
 RUN jupyter nbextension enable --py --sys-prefix widgetsnbextension
 
+# Add Kernel to use in future juypyter notebooks
+RUN pip3 install ipykernel
+RUN python3 -m ipykernel install --name py35 --display-name "Python 3.5 Custom"
+
 RUN chmod -R 777 $PY_LIB_DIR
 
 ### Jupyterhub setup ###
