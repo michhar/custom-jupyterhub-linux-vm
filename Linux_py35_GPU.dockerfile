@@ -258,15 +258,15 @@ RUN pip3 install keras==${KERAS_VERSION}
 # CoreML converter and validation tools for models
 RUN git clone https://github.com/apple/coremltools.git && cd coremltools && pip3 install -v .
 
+# Add Kernel to use in future juypyter notebooks
+RUN pip3 install ipykernel
+RUN python3 -m ipykernel install --name py35 --display-name "Python 3.5 Custom"
+
 # Configure jupyter nbextensions (needed as in https://github.com/jupyter-widgets/ipywidgets/issues/1702#issuecomment-332392774)
 RUN pip3 install jupyter jupyterhub notebook pyzmq
 RUN pip3 install jupyter_contrib_nbextensions ipywidgets
 RUN jupyter contrib nbextension install --sys-prefix
 RUN jupyter nbextension enable --py --sys-prefix widgetsnbextension
-
-# Add Kernel to use in future juypyter notebooks
-RUN pip3 install ipykernel
-RUN python3 -m ipykernel install --name py35 --display-name "Python 3.5 Custom"
 
 RUN chmod -R 777 $PY_LIB_DIR
 
