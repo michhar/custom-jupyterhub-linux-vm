@@ -19,7 +19,7 @@ LABEL maintainer "Micheleen Harris (contact michhar <at> microsoft.com)"
 ENV TENSORFLOW_VERSION="1.12.0"
 ENV KERAS_VERSION="2.2.4"
 ENV PYTORCH_VERSION="1.0"
-ENV TORCHVISION_VERION="0.2.1"
+ENV TORCHVISION_VERSION="0.1.6"
 
 RUN apt-get update && apt-get install -y \
     apt-transport-https \
