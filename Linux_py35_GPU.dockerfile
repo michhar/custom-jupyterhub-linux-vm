@@ -8,7 +8,7 @@ LABEL maintainer "Micheleen Harris (contact michhar <at> microsoft.com)"
 ENV TENSORFLOW_VERSION="1.12.0"
 ENV KERAS_VERSION="2.2.4"
 ENV PYTORCH_VERSION="1.0"
-ENV TORCHVISION_VERSION="0.1.6"
+ENV TORCHVISION_VERSION="0.2.2"
 
 # # PyTorch Release 0.3.1 if needed
 # ENV PYTORCH_COMMIT_ID="2b47480"
