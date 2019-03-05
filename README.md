@@ -14,7 +14,7 @@ The Cloud Deployment runs on top of Azure's Ubuntu Data Science Virtual Machine 
 
 ## Components
 
-**Python 3.5**
+**Python 3.6**
 
 Deep Learning:
 
@@ -82,8 +82,6 @@ You can click on the "Deploy to Azure" button to try out the Ubuntu Data Science
 | Description | Deploy Here |
 | --- | --- |
 | CPU DSVM Version | <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmichhar%2Fcustom-azure-dsvm-jupyterhub%2Fmaster%2Fazuredeploy.json" target="_blank"><img src="http://azuredeploy.net/deploybutton.png"/>
-</a> |
-| GPU DSVM Version (PyTorch 0.4.1) | <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmichhar%2Fcustom-azure-dsvm-jupyterhub%2Fmaster%2Fazuredeploy_gpu_torch0.4.1.json" target="_blank"><img src="http://azuredeploy.net/deploybutton.png"/>
 </a> |
 | GPU DSVM Version (PyTorch 1.0) | <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmichhar%2Fcustom-azure-dsvm-jupyterhub%2Fmaster%2Fazuredeploy_gpu_torch1.0.json" target="_blank"><img src="http://azuredeploy.net/deploybutton.png"/>
 </a> |
