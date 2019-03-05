@@ -60,7 +60,6 @@ RUN apt-get update && apt-get install -y \
     g++ \
     unzip \
     zlib1g-dev \
-    python3-dev \
     wget \
     bzip2 \
     libssl-dev \
@@ -124,17 +123,15 @@ RUN apt-get install software-properties-common &&\
     curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && \
     python3.6 get-pip.py
 
-RUN alias python3=python3.6 &&\
-    alias pip3=pip3.6
 
 # # Old Python install
 # RUN apt-get update && apt-get install -y \
-#     python3-dev \
-#     python3-numpy \
-#     python3-pip \
-#     python3-py \
-#     python3-pytest \
-#     python3-setuptools \
+#     python3.6-dev \
+#     python3.6-numpy \
+#     python3.6-pip \
+#     python3.6-py \
+#     python3.6-pytest \
+#     python3.6-setuptools \
 #     && \
 #     apt-get clean && \
 #     rm -rf /var/lib/apt/lists/*
@@ -144,7 +141,7 @@ ARG USER_PW
 RUN USER_PW=$USER_PW
 
 # Configure environment
-ENV PY_LIB_DIR=/usr/lib/python3.5 \
+ENV PY_LIB_DIR=/usr/lib/python3.6 \
     SHELL=/bin/bash \
     NB_USER=wonderwoman \
     NB_UID=1000 \
@@ -211,20 +208,20 @@ RUN chmod -R 777 $PY_LIB_DIR
 WORKDIR /
 COPY requirements.txt .
 
-# Requirements into the Python 3.5
-RUN pip3 install -r requirements.txt
+# Requirements into the Python 3.6
+RUN pip3.6 install -r requirements.txt
 
 # Install PyTorch with pip (installs with GPU support automagically)
 
-RUN pip3 install torch==${PYTORCH_VERSION} torchvision==${TORCHVISION_VERSION}
+RUN pip3.6 install torch==${PYTORCH_VERSION} torchvision==${TORCHVISION_VERSION}
 
 # # Install PyTorch from source (keeps just in case) - developers have all the fun!
 
 # # Build PyTorch command
 # RUN git clone --recursive https://github.com/pytorch/pytorch.git &&\
-#     pip3 uninstall torch &&\
-#     pip3 install pyyaml==3.13 &&\
-#     pip3 install -r requirements.txt &&\
+#     pip3.6 uninstall torch &&\
+#     pip3.6 install pyyaml==3.13 &&\
+#     pip3.6 install -r requirements.txt &&\
 #     USE_OPENCV=1 \
 #     BUILD_TORCH=ON \
 #     CMAKE_PREFIX_PATH="/usr/bin/" \
@@ -239,23 +236,23 @@ RUN pip3 install torch==${PYTORCH_VERSION} torchvision==${TORCHVISION_VERSION}
 #     CXX=c++ \
 #     TORCH_CUDA_ARCH_LIST="3.5 5.2 6.0 6.1+PTX" \
 #     TORCH_NVCC_FLAGS="-Xfatbin -compress-all" \
-#     python3 setup.py bdist_wheel
+#     python3.6 setup.py bdist_wheel
 
 # WORKDIR pytorch
 
 # # Install PyTorch wheel (includes PyTorch C++ API)
-# RUN pip3 install dist/*.whl
+# RUN pip3.6 install dist/*.whl
 
 # TensorFlow-GPU, TensorFlow Object Detection API, Keras and TensorFlow Probability
 ENV PATH="/usr/local/protobuf-3.5.1/bin:${PATH}"
-RUN pip3 install --upgrade Cython
-RUN pip3 install --upgrade tensorflow-gpu==${TENSORFLOW_VERSION}
-RUN pip3 install --upgrade tensorflow-probability
-RUN pip3 install -e git+https://github.com/pdollar/coco.git#egg=pycocotools&subdirectory=PythonAPI
+RUN pip3.6 install --upgrade Cython
+RUN pip3.6 install --upgrade tensorflow-gpu==${TENSORFLOW_VERSION}
+RUN pip3.6 install --upgrade tensorflow-probability
+RUN pip3.6 install -e git+https://github.com/pdollar/coco.git#egg=pycocotools&subdirectory=PythonAPI
 ARG DEBIAN_FRONTEND=noninteractive
 RUN export DEBIAN_FRONTEND="noninteractive" &&\
     apt-get update && apt-get install --yes protobuf-compiler python-pil python-lxml python-tk
-RUN pip3 install --upgrade jupyter matplotlib
+RUN pip3.6 install --upgrade jupyter matplotlib
 RUN mkdir -p /tensorflow
 WORKDIR /tensorflow/
 RUN git clone https://github.com/tensorflow/models.git
@@ -264,18 +261,23 @@ WORKDIR /tensorflow/models/research
 RUN cd /tensorflow/models/research &&\
     protoc object_detection/protos/*.proto --python_out=.
 RUN export PYTHONPATH=$PYTHONPATH:`pwd`:`pwd`/slim
-RUN pip3 install keras==${KERAS_VERSION}
+RUN pip3.6 install keras==${KERAS_VERSION}
 
 # CoreML converter and validation tools for models
-RUN git clone https://github.com/apple/coremltools.git && cd coremltools && pip3 install -v .
+RUN git clone https://github.com/apple/coremltools.git && cd coremltools && pip3.6 install -v .
+
+
+# Fix, workaround for broken kernel tornado error (https://stackoverflow.com/questions/54963043/jupyter-notebook-no-connection-to-server-because-websocket-connection-fails)
+RUN pip3.6 uninstall --yes tornado
+RUN pip3.6 install tornado==5.1.1
 
 # Add Kernel to use in future juypyter notebooks
-RUN pip3 install ipykernel
-RUN python3 -m ipykernel install --name py35_custom --display-name "Python 3.5 Custom"
+#RUN pip3.6 install --upgrade ipykernel
+#RUN python3.6 -m ipykernel install --name py35_custom --display-name "Python 3.6 Custom"
 
 # Configure jupyter nbextensions (needed as in https://github.com/jupyter-widgets/ipywidgets/issues/1702#issuecomment-332392774)
-RUN pip3 install jupyter jupyterhub notebook pyzmq
-RUN pip3 install jupyter_contrib_nbextensions ipywidgets
+RUN pip3.6 install jupyter jupyterhub notebook pyzmq
+RUN pip3.6 install jupyter_contrib_nbextensions ipywidgets
 RUN jupyter contrib nbextension install --sys-prefix
 RUN jupyter nbextension enable --py --sys-prefix widgetsnbextension
 
